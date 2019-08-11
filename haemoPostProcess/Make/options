@@ -1,0 +1,7 @@
+EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I../haemoFoamCommonCode
+    
+
+EXE_LIBS = \
+    -lfiniteVolume

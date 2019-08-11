@@ -1,0 +1,3 @@
+haemoSimpleFoam.C
+
+EXE = $(FOAM_APPBIN)/haemoSimpleFoam

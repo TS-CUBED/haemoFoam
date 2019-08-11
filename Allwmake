@@ -1,0 +1,16 @@
+#!/bin/bash
+
+apps="haemoSimpleFoam haemoPisoFoam haemoPimpleFoam haemoPostProcess"
+libs="KriegerDougherty Krieger5 Quemada Carreau"
+
+for app in $apps; do
+	cd $app
+	wmake
+	cd ..
+done
+
+for lib in $libs; do
+	cd $lib
+	wmake libso
+	cd ..
+done
