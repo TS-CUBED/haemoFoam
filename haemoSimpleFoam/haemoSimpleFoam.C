@@ -97,14 +97,6 @@ int main(int argc, char *argv[])
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
-        haemoSw = haemoSwitch;
-
-        //if (haemoSwitch.value() == 1 && runTime < haemoSwitchTime)
-        //{
-            //Info<< "Migration Model inactive" << nl << endl;
-            //haemoSw = 0.0 * haemoSwitch;    
-        //}
-
         // Pressure-velocity SIMPLE corrector
         {
 #           include "UEqn.H"
@@ -118,15 +110,7 @@ int main(int argc, char *argv[])
 
         }
 
-// Correct viscosity for non-Newtonian model
-
-//		fluid.correct();
-		
-// Back to original code
-
-
-       turbulence->correct();  // include turbulence model
-       // should include non-Newtonian!
+       turbulence->correct();  // update viscosity
 
         runTime.write();
 

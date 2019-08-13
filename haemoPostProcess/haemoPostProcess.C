@@ -42,7 +42,7 @@ Description
     * (only used for this postprocessing step, not used in calculations)
     * to get the commonly used dynamic values.
 
-	Be aware that pressures in OpenFoam are kinematic pressures!
+    Be aware that pressures in OpenFoam are kinematic pressures!
     
 Author and Copyright
     Dr Torsten Schenkel
@@ -55,6 +55,8 @@ Author and Copyright
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "singlePhaseTransportModel.H"
+#include "turbulenceModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,125 +70,125 @@ int main(int argc, char *argv[])
 
 #   include "readHaemoProperties.H"
     
-		volVectorField normalVector
-			(
-				IOobject
-				(
-					"normalVector",
-					runTime.timeName(),
-					mesh,
-					IOobject::NO_READ,
-					IOobject::AUTO_WRITE
-				),
-				mesh,
-				dimensionedVector
-				(
-					"normalVector",
-					dimLength,
-					vector::zero
-				)
-			);
+        volVectorField normalVector
+            (
+                IOobject
+                (
+                    "normalVector",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh,
+                dimensionedVector
+                (
+                    "normalVector",
+                    dimLength,
+                    vector::zero
+                )
+            );
 
-		volVectorField TAWSS
-			(
-				IOobject
-				(
-					"TAWSS",
-					runTime.timeName(),
-					mesh,
-					IOobject::NO_READ,
-					IOobject::AUTO_WRITE
-				),
-				mesh,
-				dimensionedVector
-				(
-					"TAWSS",
-					dimMass/(dimLength*dimTime),
-					//sqr(dimLength)/sqr(dimTime),
-					vector::zero
-				)
-			);
-		
-		volScalarField transWSS
-			(
-				IOobject
-				(
-					"transWSS",
-					runTime.timeName(),
-					mesh,
-					IOobject::NO_READ,
-					IOobject::AUTO_WRITE
-				),
-				mesh,
-				dimensionedScalar
-				(
-					"transWSS",
-					dimMass/(dimLength*dimTime),
-					//sqr(dimLength)/sqr(dimTime),
-					0
-				)
-			);	
-				
-		volScalarField TAWSSMag
-				(
-				IOobject
-				(
-					"TAWSSMag",
-					runTime.timeName(),
-					mesh,
-					IOobject::NO_READ,
-					IOobject::AUTO_WRITE
-				),
-				mesh,
-				dimensionedScalar
-				(
-					"TAWSSMag",
-					dimMass/(dimLength*dimTime),
-					//sqr(dimLength)/sqr(dimTime),
-					0
-				)
-			);
-				
-		volScalarField OSI
-				(
-				IOobject
-				(
-					"OSI",
-					runTime.timeName(),
-					mesh,
-					IOobject::NO_READ,
-					IOobject::AUTO_WRITE
-				),
-				mesh,
-				dimensionedScalar
-				(
-					"OSI",
-					dimless,
-					0
-				)
-			);
+        volVectorField TAWSS
+            (
+                IOobject
+                (
+                    "TAWSS",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh,
+                dimensionedVector
+                (
+                    "TAWSS",
+                    dimMass/(dimLength*dimTime),
+                    //sqr(dimLength)/sqr(dimTime),
+                    vector::zero
+                )
+            );
+        
+        volScalarField transWSS
+            (
+                IOobject
+                (
+                    "transWSS",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh,
+                dimensionedScalar
+                (
+                    "transWSS",
+                    dimMass/(dimLength*dimTime),
+                    //sqr(dimLength)/sqr(dimTime),
+                    0
+                )
+            );  
+                
+        volScalarField TAWSSMag
+                (
+                IOobject
+                (
+                    "TAWSSMag",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh,
+                dimensionedScalar
+                (
+                    "TAWSSMag",
+                    dimMass/(dimLength*dimTime),
+                    //sqr(dimLength)/sqr(dimTime),
+                    0
+                )
+            );
+                
+        volScalarField OSI
+                (
+                IOobject
+                (
+                    "OSI",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh,
+                dimensionedScalar
+                (
+                    "OSI",
+                    dimless,
+                    0
+                )
+            );
 
-		volScalarField RRT
-			(
-				IOobject
-				(
-					"RRT",
-					runTime.timeName(),
-					mesh,
-					IOobject::NO_READ,
-					IOobject::AUTO_WRITE
-				),
-				mesh,
-				dimensionedScalar
-				(
-					"RRT",
-					(dimLength*dimTime)/dimMass,
-					//sqr(dimTime)/sqr(dimLength),
-					0
-				)
-			);	
+        volScalarField RRT
+            (
+                IOobject
+                (
+                    "RRT",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh,
+                dimensionedScalar
+                (
+                    "RRT",
+                    (dimLength*dimTime)/dimMass,
+                    //sqr(dimTime)/sqr(dimLength),
+                    0
+                )
+            );  
 
-		volScalarField TAHct
+        volScalarField TAHct
                                 (
                                 IOobject
                                 (
@@ -205,14 +207,14 @@ int main(int argc, char *argv[])
                                 )
                         );
 
-		
-			
-		int nfield = 0;
+        
+            
+        int nfield = 0;
 
 // First run, calculate WSS, avgWSS and OSI
 
     
-    Info<< "First Run - calculating WSS, average WSS, OSI, RRT" << endl;	
+    Info<< "First Run - calculating WSS, average WSS, OSI, RRT" << endl;    
 
     forAll(timeDirs, timeI)
     {
@@ -246,124 +248,124 @@ int main(int argc, char *argv[])
         // Check U exists
         if (Uheader.headerOk())
         {
-			if (nuheader.headerOk())
-			{
-				mesh.readUpdate();
+            if (nuheader.headerOk())
+            {
+                mesh.readUpdate();
 
-				Info<< "    Reading U" << endl;
-				volVectorField U(Uheader, mesh);
+                Info<< "    Reading U" << endl;
+                volVectorField U(Uheader, mesh);
 
-				Info<< "    Reading nu" << endl;
-				volScalarField nu(nuheader, mesh);
+                Info<< "    Reading nu" << endl;
+                volScalarField nu(nuheader, mesh);
 
-				Info<< "    Calculating WSS" << endl;
+                Info<< "    Calculating WSS" << endl;
 
-				#   include "readHaemoProperties.H"
+                #   include "readHaemoProperties.H"
 
-				volVectorField WSS
-				(
-					IOobject
-					(
-						"WSS",
-						runTime.timeName(),
-						mesh,
-						IOobject::NO_READ,
-						IOobject::AUTO_WRITE
-					),
-					mesh,
-					dimensionedVector
-					(
-						"WSS",
-						dimMass/(dimLength*dimTime),
-						//sqr(dimLength)/sqr(dimTime),
-						vector::zero
-					)
-				);
-								
-				volScalarField WSSMag
-				(
-					IOobject
-					(
-						"WSSMag",
-						runTime.timeName(),
-						mesh,
-						IOobject::NO_READ,
-						IOobject::AUTO_WRITE
-					),
-					mesh,
-					dimensionedScalar
-					(
-						"WSSMag",
-						dimMass/(dimLength*dimTime),
-						//sqr(dimLength)/sqr(dimTime),
-						0
-					)
-				);
-				
-				
-				forAll(WSS.boundaryField(), patchi)
-				{
-					WSS.boundaryField()[patchi] =
-						-U.boundaryField()[patchi].snGrad()
-						* nu.boundaryField()[patchi]
-						* density.value();
-						
-					WSSMag.boundaryField()[patchi] =
-						mag(-U.boundaryField()[patchi].snGrad()
-						* nu.boundaryField()[patchi])
-						* density.value();
-						
-					TAWSS.boundaryField()[patchi] +=
-						-U.boundaryField()[patchi].snGrad()
-						* nu.boundaryField()[patchi]
-						* density.value();
-						
-					TAWSSMag.boundaryField()[patchi] +=
-						mag(-U.boundaryField()[patchi].snGrad()
-						* nu.boundaryField()[patchi])
-						* density.value();
-				}
-				WSS.write();
-				WSSMag.write();
-			
-				Info<< "\x1b[A \x1b[A \x1b[A \x1b[A" << endl;
-	
-				nfield++;
-			}
-			else
-			{
-				Info<< "    No nu" << endl;
-			}
-		}
-		else
-		{
-			Info<< "    No U" << endl;
-		}
-		
-		 // Check U_0 exists for TWSSG
+                volVectorField WSS
+                (
+                    IOobject
+                    (
+                        "WSS",
+                        runTime.timeName(),
+                        mesh,
+                        IOobject::NO_READ,
+                        IOobject::AUTO_WRITE
+                    ),
+                    mesh,
+                    dimensionedVector
+                    (
+                        "WSS",
+                        dimMass/(dimLength*dimTime),
+                        //sqr(dimLength)/sqr(dimTime),
+                        vector::zero
+                    )
+                );
+                                
+                volScalarField WSSMag
+                (
+                    IOobject
+                    (
+                        "WSSMag",
+                        runTime.timeName(),
+                        mesh,
+                        IOobject::NO_READ,
+                        IOobject::AUTO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar
+                    (
+                        "WSSMag",
+                        dimMass/(dimLength*dimTime),
+                        //sqr(dimLength)/sqr(dimTime),
+                        0
+                    )
+                );
+                
+                
+                forAll(WSS.boundaryField(), patchi)
+                {
+                    WSS.boundaryField()[patchi] =
+                        -U.boundaryField()[patchi].snGrad()
+                        * nu.boundaryField()[patchi]
+                        * density.value();
+                        
+                    WSSMag.boundaryField()[patchi] =
+                        mag(-U.boundaryField()[patchi].snGrad()
+                        * nu.boundaryField()[patchi])
+                        * density.value();
+                        
+                    TAWSS.boundaryField()[patchi] +=
+                        -U.boundaryField()[patchi].snGrad()
+                        * nu.boundaryField()[patchi]
+                        * density.value();
+                        
+                    TAWSSMag.boundaryField()[patchi] +=
+                        mag(-U.boundaryField()[patchi].snGrad()
+                        * nu.boundaryField()[patchi])
+                        * density.value();
+                }
+                WSS.write();
+                WSSMag.write();
+            
+                Info<< "\x1b[A \x1b[A \x1b[A \x1b[A" << endl;
+    
+                nfield++;
+            }
+            else
+            {
+                Info<< "    No nu" << endl;
+            }
+        }
+        else
+        {
+            Info<< "    No U" << endl;
+        }
+        
+         // Check U_0 exists for TWSSG
         if (U_0header.headerOk())
         {
-			if (nuheader.headerOk())
-			{
-				mesh.readUpdate();
-	
-				Info<< "    Reading U_0" << endl;
-				volVectorField U_0(U_0header, mesh);
+            if (nuheader.headerOk())
+            {
+                mesh.readUpdate();
+    
+                Info<< "    Reading U_0" << endl;
+                volVectorField U_0(U_0header, mesh);
                 
-				Info<< "    Reading nu" << endl;
-				volScalarField nu(nuheader, mesh);
-	
-				Info<< "    Calculating WSS_0" << endl;
+                Info<< "    Reading nu" << endl;
+                volScalarField nu(nuheader, mesh);
+    
+                Info<< "    Calculating WSS_0" << endl;
 
-				volVectorField WSS_0
-				(
-					IOobject
-					(
-						"WSS_0",
-						runTime.timeName(),
-						mesh,
-						IOobject::NO_READ,
-						IOobject::AUTO_WRITE
+                volVectorField WSS_0
+                (
+                    IOobject
+                    (
+                        "WSS_0",
+                        runTime.timeName(),
+                        mesh,
+                        IOobject::NO_READ,
+                        IOobject::AUTO_WRITE
                     ),
                     mesh,
                     dimensionedVector
@@ -410,10 +412,10 @@ int main(int argc, char *argv[])
                 Info<< "    Nu nu" << endl;
             }
         }
-	else
-	{
+    else
+    {
             Info<< "    No U_0" << endl;
-	}	
+    }   
     }
     
     Info<< "Writing TAWSS, TAWSSMag, OSI, RRT, normalVectors" << endl;
@@ -421,32 +423,32 @@ int main(int argc, char *argv[])
     // devide by the number of added fields
     if(nfield>0){
       Info<< "number of fields added: "<< nfield << endl;
-	
-		forAll(TAWSS.boundaryField(), patchi)
-		{
-			TAWSS.boundaryField()[patchi] /= nfield;
-		
-			TAWSSMag.boundaryField()[patchi] /= nfield;
-			
-			OSI.boundaryField()[patchi] =
-			0.5
-			* ( 1 - mag(TAWSS.boundaryField()[patchi])
-			/(TAWSSMag.boundaryField()[patchi]+1e-64)
-			);
+    
+        forAll(TAWSS.boundaryField(), patchi)
+        {
+            TAWSS.boundaryField()[patchi] /= nfield;
+        
+            TAWSSMag.boundaryField()[patchi] /= nfield;
+            
+            OSI.boundaryField()[patchi] =
+            0.5
+            * ( 1 - mag(TAWSS.boundaryField()[patchi])
+            /(TAWSSMag.boundaryField()[patchi]+1e-64)
+            );
 
-			RRT.boundaryField()[patchi] =
-			1
-			/((
-			(1 - 2.0*OSI.boundaryField()[patchi])
-			*
-			TAWSSMag.boundaryField()[patchi]
-			)+1e-64);
-			
-			normalVector.boundaryField()[patchi] =
-			mesh.Sf().boundaryField()[patchi]
-			/mesh.magSf().boundaryField()[patchi]
-			;	
-		}		
+            RRT.boundaryField()[patchi] =
+            1
+            /((
+            (1 - 2.0*OSI.boundaryField()[patchi])
+            *
+            TAWSSMag.boundaryField()[patchi]
+            )+1e-64);
+            
+            normalVector.boundaryField()[patchi] =
+            mesh.Sf().boundaryField()[patchi]
+            /mesh.magSf().boundaryField()[patchi]
+            ;   
+        }       
     }
     
     TAWSS.write();
@@ -458,9 +460,9 @@ int main(int argc, char *argv[])
     
     // Second run, calculate transWSS
     
-    Info<< "Second Run - calculating transWSS" << endl;	
+    Info<< "Second Run - calculating transWSS" << endl; 
 
-	nfield = 0;
+    nfield = 0;
 
     forAll(timeDirs, timeI)
     {
@@ -478,57 +480,57 @@ int main(int argc, char *argv[])
         // Check WSS exist
         if (WSSheader.headerOk())
         {
-			mesh.readUpdate();
+            mesh.readUpdate();
 
-			Info<< "    Reading WSS" << endl;
-			volVectorField WSS(WSSheader, mesh);
+            Info<< "    Reading WSS" << endl;
+            volVectorField WSS(WSSheader, mesh);
         
 
-			forAll(transWSS.boundaryField(), patchi)
-			{	
-				transWSS.boundaryField()[patchi] +=
-					mag(
-					WSS.boundaryField()[patchi]
-					&
-					(
-					normalVector.boundaryField()[patchi]
-					^
-					(
-					TAWSS.boundaryField()[patchi]
-					/ (mag(TAWSS.boundaryField()[patchi])+1e-64)
-					)
-					)
-					);
-			}
-				
-			nfield++;
-		}
-		else
-		{
-			Info<< "    No WSS" << endl;
-		}
-	}
+            forAll(transWSS.boundaryField(), patchi)
+            {   
+                transWSS.boundaryField()[patchi] +=
+                    mag(
+                    WSS.boundaryField()[patchi]
+                    &
+                    (
+                    normalVector.boundaryField()[patchi]
+                    ^
+                    (
+                    TAWSS.boundaryField()[patchi]
+                    / (mag(TAWSS.boundaryField()[patchi])+1e-64)
+                    )
+                    )
+                    );
+            }
+                
+            nfield++;
+        }
+        else
+        {
+            Info<< "    No WSS" << endl;
+        }
+    }
 
-	
+    
     Info<< "Writing transWSS" << endl;
     
     // devide by the number of added fields
     if(nfield>0){
       Info<< "number of fields added: "<< nfield << endl;
-	
-		forAll(transWSS.boundaryField(), patchi)
-		{
-			transWSS.boundaryField()[patchi] /= nfield;
-		}		
+    
+        forAll(transWSS.boundaryField(), patchi)
+        {
+            transWSS.boundaryField()[patchi] /= nfield;
+        }       
     }
     
     transWSS.write();
     
     // Third run, calculate TAHct
     
-    Info<< "Third Run - calculating time averaged Haematocrit TAHct" << endl;	
+    Info<< "Third Run - calculating time averaged Haematocrit TAHct" << endl;   
 
-	nfield = 0;
+    nfield = 0;
 
     forAll(timeDirs, timeI)
     {
@@ -546,36 +548,36 @@ int main(int argc, char *argv[])
         // Check H exist
         if (Hheader.headerOk())
         {
-			mesh.readUpdate();
+            mesh.readUpdate();
 
-			Info<< "    Reading H" << endl;
-			volScalarField H(Hheader, mesh);
+            Info<< "    Reading H" << endl;
+            volScalarField H(Hheader, mesh);
         
-			forAll(TAHct.boundaryField(), patchi)
-			{	
-				TAHct.boundaryField()[patchi] +=
-					H.boundaryField()[patchi];
-			}
-				
-			nfield++;
-		}
-		else
-		{
-			Info<< "    No H" << endl;
-		}
-	}
+            forAll(TAHct.boundaryField(), patchi)
+            {   
+                TAHct.boundaryField()[patchi] +=
+                    H.boundaryField()[patchi];
+            }
+                
+            nfield++;
+        }
+        else
+        {
+            Info<< "    No H" << endl;
+        }
+    }
 
-	
+    
     Info<< "Writing TAHct" << endl;
     
     // devide by the number of added fields
     if(nfield>0){
       Info<< "number of fields added: "<< nfield << endl;
-	
-		forAll(TAHct.boundaryField(), patchi)
-		{
-			TAHct.boundaryField()[patchi] /= nfield;
-		}		
+    
+        forAll(TAHct.boundaryField(), patchi)
+        {
+            TAHct.boundaryField()[patchi] /= nfield;
+        }       
     }
     
     TAHct.write();
