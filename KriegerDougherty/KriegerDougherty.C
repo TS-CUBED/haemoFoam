@@ -70,9 +70,10 @@ Foam::viscosityModels::KriegerDougherty::KriegerDougherty
     
     n_(KriegerDoughertyCoeffs_.lookup("n")),
     muPlasma_(KriegerDoughertyCoeffs_.lookup("muPlasma")),
-    rho_(KriegerDoughertyCoeffs_.lookup("rho")),
     
     Hcrit_(KriegerDoughertyCoeffs_.lookup("Hcrit")),
+    
+    rho_(viscosityProperties.lookup("rho")),
     
     nu_
     (
@@ -102,9 +103,10 @@ bool Foam::viscosityModels::KriegerDougherty::read
 
     KriegerDoughertyCoeffs_.lookup("n") >> n_;
     KriegerDoughertyCoeffs_.lookup("muPlasma") >> muPlasma_;
-    KriegerDoughertyCoeffs_.lookup("rho") >> rho_;
     
     KriegerDoughertyCoeffs_.lookup("Hcrit") >> Hcrit_;
+    
+    viscosityProperties.lookup("rho") >> rho_;
     
     return true;
 }

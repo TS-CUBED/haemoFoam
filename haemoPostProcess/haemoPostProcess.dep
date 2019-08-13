@@ -691,6 +691,9 @@ haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/OSspecific/POSIX/lnInclude/sigSegv.H
 haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/foam/lnInclude/timeSelector.H
 haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/foam/lnInclude/scalarRanges.H
 haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/foam/lnInclude/scalarRange.H
+haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/transportModels/incompressible/singlePhaseTransportModel/singlePhaseTransportModel.H
+haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/transportModels/incompressible/transportModel/transportModel.H
+haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/turbulenceModels/incompressible/turbulenceModel/turbulenceModel.H
 haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/foam/lnInclude/setRootCase.H
 haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/foam/lnInclude/createTime.H
 haemoPostProcess.dep: $(WM_PROJECT_DIR)/src/foam/lnInclude/createMesh.H

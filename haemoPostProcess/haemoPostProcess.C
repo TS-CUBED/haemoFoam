@@ -38,8 +38,7 @@ Description
     
     All WSS calculations are using kinematic values in
     * accordance to FOAMs stress and pressure definitions and are
-    * multiplied with the density defined in haemoTransportProperties
-    * (only used for this postprocessing step, not used in calculations)
+    * multiplied with the density rho as defined in transportProperties
     * to get the commonly used dynamic values.
 
     Be aware that pressures in OpenFoam are kinematic pressures!
@@ -69,6 +68,23 @@ int main(int argc, char *argv[])
 #   include "createMesh.H"
 
 #   include "readHaemoProperties.H"
+    
+    IOdictionary transportProperties
+    (
+        IOobject
+        (
+            "transportProperties", // name of the dictionary
+            runTime.constant(), // location in the case - this one is in constant
+            mesh, // needs the mesh object reference to do some voodoo - unimportant now
+            IOobject::MUST_READ, // the file will be re-read if it gets modified during time stepping
+            IOobject::NO_WRITE // read-only
+        )
+    );
+    
+    dimensionedScalar rho(transportProperties.lookup("rho"));
+    
+    Info << rho << endl;
+    
     
         volVectorField normalVector
             (
@@ -260,7 +276,7 @@ int main(int argc, char *argv[])
 
                 Info<< "    Calculating WSS" << endl;
 
-                #   include "readHaemoProperties.H"
+              
 
                 volVectorField WSS
                 (
@@ -308,22 +324,22 @@ int main(int argc, char *argv[])
                     WSS.boundaryField()[patchi] =
                         -U.boundaryField()[patchi].snGrad()
                         * nu.boundaryField()[patchi]
-                        * density.value();
+                        * rho.value();
                         
                     WSSMag.boundaryField()[patchi] =
                         mag(-U.boundaryField()[patchi].snGrad()
                         * nu.boundaryField()[patchi])
-                        * density.value();
+                        * rho.value();
                         
                     TAWSS.boundaryField()[patchi] +=
                         -U.boundaryField()[patchi].snGrad()
                         * nu.boundaryField()[patchi]
-                        * density.value();
+                        * rho.value();
                         
                     TAWSSMag.boundaryField()[patchi] +=
                         mag(-U.boundaryField()[patchi].snGrad()
                         * nu.boundaryField()[patchi])
-                        * density.value();
+                        * rho.value();
                 }
                 WSS.write();
                 WSSMag.write();
@@ -403,7 +419,7 @@ int main(int argc, char *argv[])
                     WSS_0.boundaryField()[patchi] =
                         -U_0.boundaryField()[patchi].snGrad()
                         * nu.boundaryField()[patchi]
-                        * density.value();
+                        * rho.value();
                 }
                 WSS_0.write();
             }
