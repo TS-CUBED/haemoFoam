@@ -1,2 +1,0 @@
-OBJECTS = \
-$(OBJECTS_DIR)/Krieger5.o
