@@ -15,29 +15,29 @@
     );
 
     dimensionedScalar a   
-    ("a",     haemoTransportProperties.lookup("a"));
+    (haemoTransportProperties.lookup("a"));
     dimensionedScalar Kc  
-    ("Kc",    haemoTransportProperties.lookup("Kc"));
+    (haemoTransportProperties.lookup("Kc"));
     dimensionedScalar Kmu 
-    ("Kmu",   haemoTransportProperties.lookup("Kmu"));
+    (haemoTransportProperties.lookup("Kmu"));
     
     dimensionedScalar haemoSwitch 
-    ("haemoSwitch",   haemoTransportProperties.lookup("haemoSwitch"));
+    (haemoTransportProperties.lookup("haemoSwitch"));
     dimensionedScalar haemoSwitchTime
-    ("haemoSwitchTime",   haemoTransportProperties.lookup("haemoSwitchTime"));
+    (haemoTransportProperties.lookup("haemoSwitchTime"));
     
     dimensionedScalar haemoSw = haemoSwitch;
     
     dimensionedScalar linKc 
-    ("linKc",   haemoTransportProperties.lookup("linKc"));
+    (haemoTransportProperties.lookup("linKc"));
     dimensionedScalar nonlinKc
-    ("nonlinKc",   haemoTransportProperties.lookup("nonlinKc"));
+    (haemoTransportProperties.lookup("nonlinKc"));
     dimensionedScalar nonlinKcRatio 
-    ("nonlinKcRatio",   haemoTransportProperties.lookup("nonlinKcRatio"));
+    (haemoTransportProperties.lookup("nonlinKcRatio"));
     
     // this should actually be in transportProperties, not here!
-    dimensionedScalar density
-    ("density",   haemoTransportProperties.lookup("density"));
+    //dimensionedScalar density
+    //(haemoTransportProperties.lookup("density"));
     
     
     if (linKc.value() == 1.0 && nonlinKc.value() == 0.0) {
