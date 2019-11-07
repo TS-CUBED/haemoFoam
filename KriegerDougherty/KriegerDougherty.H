@@ -68,10 +68,8 @@ class KriegerDougherty
 
         dimensionedScalar n_;
         dimensionedScalar muPlasma_;
-        dimensionedScalar rho_;
-        
         dimensionedScalar Hcrit_;
-
+		dimensionedScalar rho_;
         volScalarField nu_;
 
 

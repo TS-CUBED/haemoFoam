@@ -74,10 +74,8 @@ class Krieger5
         dimensionedScalar a_, b_, c_;
         dimensionedScalar beta_, lambda_, nuK_;
         dimensionedScalar muPlasma_;
-        dimensionedScalar rho_;
-
 		dimensionedScalar Hcrit_;
-
+		dimensionedScalar rho_;
         volScalarField nu_;
 
 
