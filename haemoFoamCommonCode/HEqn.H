@@ -1,8 +1,8 @@
 // Haematocrit transport equation
 
 gammaDot = pow(2,0.5)*mag(symm(fvc::grad(U)));
-// this should be the correct definition of gammaDot
-        
+// definition of gammaDot
+
         fvScalarMatrix HEqn
         (
             fvm::ddt(H)
@@ -19,11 +19,10 @@ gammaDot = pow(2,0.5)*mag(symm(fvc::grad(U)));
 
         if (haemoSwitch.value() == 0 || runTime < haemoSwitchTime)
         {
-            Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;      
+            Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
         } else
         {
             HEqn.relax();                   // use these two lines
             HEqn.solve().initialResidual(); // for underrelaxed solver
 //          HEqn.solve(); // or this one for no underrelaxation (unstable)
         }
-
