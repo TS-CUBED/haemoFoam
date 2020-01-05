@@ -25,7 +25,8 @@ volScalarField gammaDot
         IOobject::READ_IF_PRESENT,
         IOobject::AUTO_WRITE
     ),
-    mesh
+    mesh,
+    dimensionedScalar("gammaDot", dimless/dimTime, scalar(0.0))
 );
 
 // and back to the original code
