@@ -29,4 +29,4 @@ volScalarField gammaDot
     dimensionedScalar("gammaDot", dimless/dimTime, scalar(0.0))
 );
 
-// and back to the original code
+//  and back to the original code
