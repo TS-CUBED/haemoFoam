@@ -1,5 +1,6 @@
 // Haematocrit transport equation
 
+
 gammaDot = pow(2,0.5)*mag(symm(fvc::grad(U)));
 // that is the usual definition of gammaDot
 
