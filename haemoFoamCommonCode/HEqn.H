@@ -1,7 +1,7 @@
 // Haematocrit transport equation
 
 gammaDot = pow(2,0.5)*mag(symm(fvc::grad(U)));
-// definition of gammaDot
+// that is the usual definition of gammaDot
 
         fvScalarMatrix HEqn
         (
