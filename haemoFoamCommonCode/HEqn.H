@@ -24,5 +24,5 @@ gammaDot = pow(2,0.5)*mag(symm(fvc::grad(U)));
         {
             HEqn.relax();                   // use these two lines
             HEqn.solve().initialResidual(); // for underrelaxed solver
-//          HEqn.solve(); // or this one for no underrelaxation (unstable)
+            // HEqn.solve(); // or this one for no underrelaxation (unstable)
         }
