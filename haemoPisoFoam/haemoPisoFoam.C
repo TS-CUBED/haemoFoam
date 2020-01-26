@@ -74,14 +74,14 @@ int main(int argc, char *argv[])
 #   include "createFields.H"
 #   include "initContinuityErrs.H"
 
-// Read properties for haematocrit transp
+    // Read properties for haematocrit transp
 
 #   include "readHaemoProperties.H"
 
     turbulence->correct();
-    
 
-// Back to original code
+
+    // Back to original code
 
 
     Info<< "\nStarting time loop\n" << endl;
@@ -97,11 +97,11 @@ int main(int argc, char *argv[])
             // Momentum predictor
 
             fvVectorMatrix UEqn
-            (
-                fvm::ddt(U)
-              + fvm::div(phi, U)
-              + turbulence->divDevReff()
-            );
+                (
+                 fvm::ddt(U)
+                 + fvm::div(phi, U)
+                 + turbulence->divDevReff()
+                );
 
             UEqn.relax();
 
@@ -128,29 +128,29 @@ int main(int argc, char *argv[])
                     // Pressure corrector
 
                     fvScalarMatrix pEqn
-                    (
-                        fvm::laplacian(rUA, p) == fvc::div(phi)
-                    );
+                        (
+                         fvm::laplacian(rUA, p) == fvc::div(phi)
+                        );
 
                     pEqn.setReference(pRefCell, pRefValue);
                     pEqn.solve
-                    (
-                        mesh.solutionDict().solver
                         (
-                            p.select(piso.finalInnerIter())
-                        )
-                    );
+                         mesh.solutionDict().solver
+                         (
+                          p.select(piso.finalInnerIter())
+                         )
+                        );
 
                     if (piso.finalNonOrthogonalIter())
                     {
                         phi -= pEqn.flux();
                     }
-                    
-//                  Calculate H equation                    
-                    
+
+                    //                  Calculate H equation                    
+
 #                   include "HEqn.H"
 
-//                  Back to original code
+                    //                  Back to original code
 
                 }
 

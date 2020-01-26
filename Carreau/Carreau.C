@@ -31,16 +31,16 @@ License
 
 namespace Foam
 {
-namespace viscosityModels
-{
-    defineTypeNameAndDebug(Carreau, 0);
-    addToRunTimeSelectionTable
-    (
-        viscosityModel,
-        Carreau,
-        dictionary
-    );
-}
+    namespace viscosityModels
+    {
+        defineTypeNameAndDebug(Carreau, 0);
+        addToRunTimeSelectionTable
+            (
+             viscosityModel,
+             Carreau,
+             dictionary
+            );
+    }
 }
 
 
@@ -49,70 +49,70 @@ namespace viscosityModels
 Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::Carreau::calcNu() const
 {
-//    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
-    
-      return muInf_/rho_ + 
-                (mu0_ - muInf_)/rho_ * pow((1.0 + pow(strainRate()*lambda_,2)),((n_ - 1)/2)); 
+    //    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
+
+    return muInf_/rho_ + 
+        (mu0_ - muInf_)/rho_ * pow((1.0 + pow(strainRate()*lambda_,2)),((n_ - 1)/2)); 
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::viscosityModels::Carreau::Carreau
+    Foam::viscosityModels::Carreau::Carreau
 (
-    const word& name,
-    const dictionary& viscosityProperties,
-    const volVectorField& U,
-    const surfaceScalarField& phi
-)
-:
-    viscosityModel(name, viscosityProperties, U, phi),
-    CarreauCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
-    
-    n_(CarreauCoeffs_.lookup("n")),
-    
-    lambda_(CarreauCoeffs_.lookup("lambda")),
-    
-    mu0_(CarreauCoeffs_.lookup("mu0")),
-    muInf_(CarreauCoeffs_.lookup("muInf")),
-    
-    rho_(CarreauCoeffs_.lookup("rho")),
-     
-    nu_
-    (
-        IOobject
+ const word& name,
+ const dictionary& viscosityProperties,
+ const volVectorField& U,
+ const surfaceScalarField& phi
+ )
+    :
+        viscosityModel(name, viscosityProperties, U, phi),
+        CarreauCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
+
+        n_(CarreauCoeffs_.lookup("n")),
+
+        lambda_(CarreauCoeffs_.lookup("lambda")),
+
+        mu0_(CarreauCoeffs_.lookup("mu0")),
+        muInf_(CarreauCoeffs_.lookup("muInf")),
+
+        rho_(CarreauCoeffs_.lookup("rho")),
+
+        nu_
         (
-            "nu",
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        calcNu()
-    )
+         IOobject
+         (
+          "nu",
+          U_.time().timeName(),
+          U_.db(),
+          IOobject::NO_READ,
+          IOobject::AUTO_WRITE
+         ),
+         calcNu()
+        )
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-bool Foam::viscosityModels::Carreau::read
+    bool Foam::viscosityModels::Carreau::read
 (
-    const dictionary& viscosityProperties
-)
+ const dictionary& viscosityProperties
+ )
 {
     viscosityModel::read(viscosityProperties);
 
     CarreauCoeffs_ = viscosityProperties.subDict(typeName + "Coeffs");
 
     CarreauCoeffs_.lookup("n") >> n_;    
-    
+
     CarreauCoeffs_.lookup("lambda") >> lambda_;
-        
+
     CarreauCoeffs_.lookup("mu0") >> mu0_;
     CarreauCoeffs_.lookup("muInf") >> muInf_;
-    
+
     CarreauCoeffs_.lookup("rho") >> rho_;
-    
+
     return true;
 }
 

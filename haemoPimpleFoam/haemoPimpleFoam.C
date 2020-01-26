@@ -76,14 +76,14 @@ int main(int argc, char *argv[])
 #   include "initContinuityErrs.H"
 #   include "createTimeControls.H"
 
-// Read properties for haematocrit transp
+    // Read properties for haematocrit transp
 
 #   include "readHaemoProperties.H"
 
-	turbulence->correct();
-    
+    turbulence->correct();
 
-// Back to original code
+
+    // Back to original code
 
     Info<< "\nStarting time loop\n" << endl;
 
@@ -107,16 +107,16 @@ int main(int argc, char *argv[])
             {
 #               include "pEqn.H"
 
-// Calculate H equation
+                // Calculate H equation
 
 #				include "HEqn.H"
 
-// Back to original code
+                // Back to original code
 
             }
 
-        turbulence->correct();  
-        
+            turbulence->correct();  
+
         }
 
         runTime.write();

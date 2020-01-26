@@ -31,16 +31,16 @@ License
 
 namespace Foam
 {
-namespace viscosityModels
-{
-    defineTypeNameAndDebug(Krieger5, 0);
-    addToRunTimeSelectionTable
-    (
-        viscosityModel,
-        Krieger5,
-        dictionary
-    );
-}
+    namespace viscosityModels
+    {
+        defineTypeNameAndDebug(Krieger5, 0);
+        addToRunTimeSelectionTable
+            (
+             viscosityModel,
+             Krieger5,
+             dictionary
+            );
+    }
 }
 
 
@@ -50,82 +50,82 @@ Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::Krieger5::calcNu() const
 {
     const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
-    
-     return muPlasma_/rho_ * 
-		pow((1-H/Hcrit_),-1*((a_+b_*exp(-1*c_*H)+beta_*pow((1+pow(lambda_*strainRate(),2)),(-1*nuK_)))));                                 
+
+    return muPlasma_/rho_ * 
+        pow((1-H/Hcrit_),-1*((a_+b_*exp(-1*c_*H)+beta_*pow((1+pow(lambda_*strainRate(),2)),(-1*nuK_)))));                                 
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::viscosityModels::Krieger5::Krieger5
+    Foam::viscosityModels::Krieger5::Krieger5
 (
-    const word& name,
-    const dictionary& viscosityProperties,
-    const volVectorField& U,
-    const surfaceScalarField& phi
-)
-:
-    viscosityModel(name, viscosityProperties, U, phi),
-    Krieger5Coeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
-    
-    a_(Krieger5Coeffs_.lookup("a")),
-    b_(Krieger5Coeffs_.lookup("b")),
-    c_(Krieger5Coeffs_.lookup("c")),
-    
-    beta_(Krieger5Coeffs_.lookup("beta")),
-    lambda_(Krieger5Coeffs_.lookup("lambda")),
-    
-    nuK_(Krieger5Coeffs_.lookup("nuK")),
-    
-    muPlasma_(Krieger5Coeffs_.lookup("muPlasma")),
-    
-    Hcrit_(Krieger5Coeffs_.lookup("Hcrit")),
-    
-    rho_(viscosityProperties.lookup("rho")),
-    
-    nu_
-    (
-        IOobject
+ const word& name,
+ const dictionary& viscosityProperties,
+ const volVectorField& U,
+ const surfaceScalarField& phi
+ )
+    :
+        viscosityModel(name, viscosityProperties, U, phi),
+        Krieger5Coeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
+
+        a_(Krieger5Coeffs_.lookup("a")),
+        b_(Krieger5Coeffs_.lookup("b")),
+        c_(Krieger5Coeffs_.lookup("c")),
+
+        beta_(Krieger5Coeffs_.lookup("beta")),
+        lambda_(Krieger5Coeffs_.lookup("lambda")),
+
+        nuK_(Krieger5Coeffs_.lookup("nuK")),
+
+        muPlasma_(Krieger5Coeffs_.lookup("muPlasma")),
+
+        Hcrit_(Krieger5Coeffs_.lookup("Hcrit")),
+
+        rho_(viscosityProperties.lookup("rho")),
+
+        nu_
         (
-            "nu",
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        calcNu()
-    )
+         IOobject
+         (
+          "nu",
+          U_.time().timeName(),
+          U_.db(),
+          IOobject::NO_READ,
+          IOobject::AUTO_WRITE
+         ),
+         calcNu()
+        )
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-bool Foam::viscosityModels::Krieger5::read
+    bool Foam::viscosityModels::Krieger5::read
 (
-    const dictionary& viscosityProperties
-)
+ const dictionary& viscosityProperties
+ )
 {
     viscosityModel::read(viscosityProperties);
 
     Krieger5Coeffs_ = viscosityProperties.subDict(typeName + "Coeffs");
 
-     Krieger5Coeffs_.lookup("a") >> a_;    
+    Krieger5Coeffs_.lookup("a") >> a_;    
     Krieger5Coeffs_.lookup("b") >> b_;
     Krieger5Coeffs_.lookup("c") >> c_;
-    
+
     Krieger5Coeffs_.lookup("beta") >> beta_;
     Krieger5Coeffs_.lookup("lambda") >> lambda_;
-    
+
     Krieger5Coeffs_.lookup("nuK") >> nuK_;
-        
+
     Krieger5Coeffs_.lookup("muPlasma") >> muPlasma_;
-    
-    
+
+
     Krieger5Coeffs_.lookup("Hcrit") >> Hcrit_;
-    
+
     viscosityProperties.lookup("rho") >> rho_;
-    
+
     return true;
 }
 

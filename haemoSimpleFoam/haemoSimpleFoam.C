@@ -80,16 +80,16 @@ int main(int argc, char *argv[])
 #   include "createFields.H"
 #   include "initContinuityErrs.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// Read properties for haematocrit transp
+    // Read properties for haematocrit transp
 
 #   include "readHaemoProperties.H"
 
-	turbulence->correct();
-    
+    turbulence->correct();
 
-// Back to original code
+
+    // Back to original code
 
     Info<< "\nStarting time loop\n" << endl;
 
@@ -102,15 +102,15 @@ int main(int argc, char *argv[])
 #           include "UEqn.H"
 #           include "pEqn.H"
 
-// Calculate H equation
+            // Calculate H equation
 
 #			include "HEqn.H"
 
-// Back to original code
+            // Back to original code
 
         }
 
-       turbulence->correct();  // update viscosity
+        turbulence->correct();  // update viscosity
 
         runTime.write();
 

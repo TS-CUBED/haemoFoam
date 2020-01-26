@@ -51,80 +51,80 @@ SourceFiles
 
 namespace Foam
 {
-namespace viscosityModels
-{
+    namespace viscosityModels
+    {
 
-/*---------------------------------------------------------------------------*\
-                           Class KriegerDougherty Declaration
-\*---------------------------------------------------------------------------*/
+        /*---------------------------------------------------------------------------*\
+          Class KriegerDougherty Declaration
+          \*---------------------------------------------------------------------------*/
 
-class KriegerDougherty
-:
-    public viscosityModel
-{
-    // Private data
-
-        dictionary KriegerDoughertyCoeffs_;
-
-        dimensionedScalar n_;
-        dimensionedScalar muPlasma_;
-        dimensionedScalar Hcrit_;
-		dimensionedScalar rho_;
-        volScalarField nu_;
-
-
-    // Private Member Functions
-
-        //- Calculate and return the laminar viscosity
-        tmp<volScalarField> calcNu() const;
-
-
-public:
-
-    //- Runtime type information
-    TypeName("KriegerDougherty");
-
-
-    // Constructors
-
-        //- construct from components
-        KriegerDougherty
-        (
-            const word& name,
-            const dictionary& viscosityProperties,
-            const volVectorField& U,
-            const surfaceScalarField& phi
-        );
-
-
-    // Destructor
-
-        virtual ~KriegerDougherty()
-        {}
-
-
-    // Member Functions
-
-        //- Return the laminar viscosity
-        virtual const volScalarField& nu() const
+        class KriegerDougherty
+            :
+                public viscosityModel
         {
-            return nu_;
-        }
+            // Private data
 
-        //- Correct the laminar viscosity
-        virtual void correct()
-        {
-            nu_ = calcNu();
-        }
+            dictionary KriegerDoughertyCoeffs_;
 
-        //- Read transportProperties dictionary
-        virtual bool read(const dictionary& viscosityProperties);
-};
+            dimensionedScalar n_;
+            dimensionedScalar muPlasma_;
+            dimensionedScalar Hcrit_;
+            dimensionedScalar rho_;
+            volScalarField nu_;
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+            // Private Member Functions
 
-} // End namespace viscosityModels
+            //- Calculate and return the laminar viscosity
+            tmp<volScalarField> calcNu() const;
+
+
+            public:
+
+            //- Runtime type information
+            TypeName("KriegerDougherty");
+
+
+            // Constructors
+
+            //- construct from components
+            KriegerDougherty
+                (
+                 const word& name,
+                 const dictionary& viscosityProperties,
+                 const volVectorField& U,
+                 const surfaceScalarField& phi
+                );
+
+
+            // Destructor
+
+            virtual ~KriegerDougherty()
+            {}
+
+
+            // Member Functions
+
+            //- Return the laminar viscosity
+            virtual const volScalarField& nu() const
+            {
+                return nu_;
+            }
+
+            //- Correct the laminar viscosity
+            virtual void correct()
+            {
+                nu_ = calcNu();
+            }
+
+            //- Read transportProperties dictionary
+            virtual bool read(const dictionary& viscosityProperties);
+        };
+
+
+        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+    } // End namespace viscosityModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

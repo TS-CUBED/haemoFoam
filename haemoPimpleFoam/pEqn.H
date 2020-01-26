@@ -19,15 +19,15 @@
     while (pimple.correctNonOrthogonal())
     {
         fvScalarMatrix pEqn
-        (
-            fvm::laplacian(1/aU, p) == fvc::div(phi)
-        );
+            (
+             fvm::laplacian(1/aU, p) == fvc::div(phi)
+            );
 
         pEqn.setReference(pRefCell, pRefValue);
         pEqn.solve
-        (
-            mesh.solutionDict().solver(p.select(pimple.finalInnerIter()))
-        );
+            (
+             mesh.solutionDict().solver(p.select(pimple.finalInnerIter()))
+            );
 
         if (pimple.finalNonOrthogonalIter())
         {
@@ -45,11 +45,11 @@
 
     U = UUrf*
         (
-            1.0/(aU + ddtUEqn.A())*
-            (
-                U*aU - fvc::grad(p) + ddtUEqn.H()
-            )
+         1.0/(aU + ddtUEqn.A())*
+         (
+          U*aU - fvc::grad(p) + ddtUEqn.H()
+         )
         )
-      + (1 - UUrf)*U.prevIter();
+        + (1 - UUrf)*U.prevIter();
     U.correctBoundaryConditions();
 }

@@ -31,16 +31,16 @@ License
 
 namespace Foam
 {
-namespace viscosityModels
-{
-    defineTypeNameAndDebug(KriegerDougherty, 0);
-    addToRunTimeSelectionTable
-    (
-        viscosityModel,
-        KriegerDougherty,
-        dictionary
-    );
-}
+    namespace viscosityModels
+    {
+        defineTypeNameAndDebug(KriegerDougherty, 0);
+        addToRunTimeSelectionTable
+            (
+             viscosityModel,
+             KriegerDougherty,
+             dictionary
+            );
+    }
 }
 
 
@@ -50,52 +50,52 @@ Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::KriegerDougherty::calcNu() const
 {
     const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
-    
+
     return muPlasma_/rho_*pow((1-H/Hcrit_),(-1*n_));   
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::viscosityModels::KriegerDougherty::KriegerDougherty
+    Foam::viscosityModels::KriegerDougherty::KriegerDougherty
 (
-    const word& name,
-    const dictionary& viscosityProperties,
-    const volVectorField& U,
-    const surfaceScalarField& phi
-)
-:
-    viscosityModel(name, viscosityProperties, U, phi),
-    KriegerDoughertyCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
-    
-    n_(KriegerDoughertyCoeffs_.lookup("n")),
-    muPlasma_(KriegerDoughertyCoeffs_.lookup("muPlasma")),
-    
-    Hcrit_(KriegerDoughertyCoeffs_.lookup("Hcrit")),
-    
-    rho_(viscosityProperties.lookup("rho")),
-    
-    nu_
-    (
-        IOobject
+ const word& name,
+ const dictionary& viscosityProperties,
+ const volVectorField& U,
+ const surfaceScalarField& phi
+ )
+    :
+        viscosityModel(name, viscosityProperties, U, phi),
+        KriegerDoughertyCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
+
+        n_(KriegerDoughertyCoeffs_.lookup("n")),
+        muPlasma_(KriegerDoughertyCoeffs_.lookup("muPlasma")),
+
+        Hcrit_(KriegerDoughertyCoeffs_.lookup("Hcrit")),
+
+        rho_(viscosityProperties.lookup("rho")),
+
+        nu_
         (
-            "nu",
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        calcNu()
-    )
+         IOobject
+         (
+          "nu",
+          U_.time().timeName(),
+          U_.db(),
+          IOobject::NO_READ,
+          IOobject::AUTO_WRITE
+         ),
+         calcNu()
+        )
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-bool Foam::viscosityModels::KriegerDougherty::read
+    bool Foam::viscosityModels::KriegerDougherty::read
 (
-    const dictionary& viscosityProperties
-)
+ const dictionary& viscosityProperties
+ )
 {
     viscosityModel::read(viscosityProperties);
 
@@ -103,11 +103,11 @@ bool Foam::viscosityModels::KriegerDougherty::read
 
     KriegerDoughertyCoeffs_.lookup("n") >> n_;
     KriegerDoughertyCoeffs_.lookup("muPlasma") >> muPlasma_;
-    
+
     KriegerDoughertyCoeffs_.lookup("Hcrit") >> Hcrit_;
-    
+
     viscosityProperties.lookup("rho") >> rho_;
-    
+
     return true;
 }
 

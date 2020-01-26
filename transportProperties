@@ -20,7 +20,7 @@ FoamFile
 
 transportModel  Quemada;
 
-    rho             rho         [ 1 -3 0 0 0 0 0 ]      1060;
+rho             rho         [ 1 -3 0 0 0 0 0 ]      1060;
 
 KriegerDoughertyCoeffs
 {
@@ -35,11 +35,11 @@ Krieger5Coeffs
     a               a           [ 0 0 0 0 0 0 0 ]        0; // zero in MKM5
     b               b           [ 0 0 0 0 0 0 0 ]        8.781;
     c               c           [ 0 0 0 0 0 0 0 ]        2.824;
-    
+
     beta            beta        [ 0 0 0 0 0 0 0 ]        16.1;    
     lambda          lambda_     [ 0 0 1 0 0 0 0 ]        1206;
     nuK             nuK         [ 0 0 0 0 0 0 0 ]        0.1427;
-    
+
     muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;    
     Hcrit           Hcrit       [ 0 0 0 0 0 0 0 ]        0.98;
 }
@@ -48,17 +48,17 @@ QuemadaCoeffs
 {
     a0              a0          [ 0 0 0 0 0 0 0 ]       0.0611;
     a1              a1          [ 0 0 0 0 0 0 0 ]       0.04778;
-    
+
     b0              b0          [ 0 0 0 0 0 0 0 ]       1.803;
     b1              b1          [ 0 0 0 0 0 0 0 ]       -3.683;
     b2              b2          [ 0 0 0 0 0 0 0 ]       2.614;
     b3              b3          [ 0 0 0 0 0 0 0 ]       -0.005193;
-    
+
     c0              c0          [ 0 0 0 0 0 0 0 ]       -7.022;
     c1              c1          [ 0 0 0 0 0 0 0 ]       34.46;
     c2              c2          [ 0 0 0 0 0 0 0 ]       -39.96;
     c3              c3          [ 0 0 0 0 0 0 0 ]       14.1;
-    
+
     gammaC0         gammaC0     [ 0 0 -1 0 0 0 0 ]      1.0;    //needed for dimension only leave at 1.0!
     muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;    
 }

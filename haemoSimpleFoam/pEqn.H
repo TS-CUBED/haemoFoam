@@ -4,10 +4,10 @@
     // Prepare clean 1/Ap without contribution from under-relaxation
     // HJ, 26/Oct/2015
     volScalarField rAU
-    (
-        "(1|A(U))",
-        1/HUEqn().A()
-    );
+        (
+         "(1|A(U))",
+         1/HUEqn().A()
+        );
 
     // Store velocity under-relaxation point before using U for
     // the flux precursor
@@ -23,9 +23,9 @@
     while (simple.correctNonOrthogonal())
     {
         fvScalarMatrix pEqn
-        (
-            fvm::laplacian(rAU, p) == fvc::div(phi)
-        );
+            (
+             fvm::laplacian(rAU, p) == fvc::div(phi)
+            );
 
         pEqn.setReference(pRefCell, pRefValue);
 

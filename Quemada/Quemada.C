@@ -31,16 +31,16 @@ License
 
 namespace Foam
 {
-namespace viscosityModels
-{
-    defineTypeNameAndDebug(Quemada, 0);
-    addToRunTimeSelectionTable
-    (
-        viscosityModel,
-        Quemada,
-        dictionary
-    );
-}
+    namespace viscosityModels
+    {
+        defineTypeNameAndDebug(Quemada, 0);
+        addToRunTimeSelectionTable
+            (
+             viscosityModel,
+             Quemada,
+             dictionary
+            );
+    }
 }
 
 
@@ -50,96 +50,96 @@ Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::Quemada::calcNu() const
 {
     const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
-    
+
     return muPlasma_/rho_ *
-                        pow
-                        (
-                        (
-                        1.0-0.5*
-                        // K: Quemada Parameter
-                        (
-                        (
-                        (a0_+2/(a1_+H))                                   // k0 
-                        +
-                        exp(b0_+b1_*H+b2_*pow(H,2.0)+b3_*pow(H,3.0))        // kInf
-                        *sqrt
-                        (
-                        strainRate()/
-                        (
-                        exp(c0_+c1_*H+c2_*pow(H,2.0)+c3_*pow(H,3.0))
-                        *gammaC0_                                        // gammaC
-                        )
-                        )
-                        )
-                        /
-                        (
-                        1+sqrt
-                        (
-                        strainRate()/
-                        (
-                        exp(c0_+c1_*H+c2_*pow(H,2.0)+c3_*pow(H,3.0))        
-                        *gammaC0_                                        // gammaC
-                        )
-                        )
-                        )
-                        )
-                        // end K
-                        *H
-                        ),-2
-                        )
-                        ;             
+        pow
+        (
+         (
+          1.0-0.5*
+          // K: Quemada Parameter
+          (
+           (
+            (a0_+2/(a1_+H))                                   // k0 
+            +
+            exp(b0_+b1_*H+b2_*pow(H,2.0)+b3_*pow(H,3.0))        // kInf
+            *sqrt
+            (
+             strainRate()/
+             (
+              exp(c0_+c1_*H+c2_*pow(H,2.0)+c3_*pow(H,3.0))
+              *gammaC0_                                        // gammaC
+             )
+            )
+           )
+           /
+           (
+            1+sqrt
+            (
+             strainRate()/
+             (
+              exp(c0_+c1_*H+c2_*pow(H,2.0)+c3_*pow(H,3.0))        
+              *gammaC0_                                        // gammaC
+             )
+            )
+           )
+           )
+           // end K
+           *H
+           ),-2
+           )
+           ;             
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::viscosityModels::Quemada::Quemada
+    Foam::viscosityModels::Quemada::Quemada
 (
-    const word& name,
-    const dictionary& viscosityProperties,
-    const volVectorField& U,
-    const surfaceScalarField& phi
-)
-:
-    viscosityModel(name, viscosityProperties, U, phi),
-    QuemadaCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
-    
-    a0_(QuemadaCoeffs_.lookup("a0")),
-    a1_(QuemadaCoeffs_.lookup("a1")),
-    b0_(QuemadaCoeffs_.lookup("b0")),
-    b1_(QuemadaCoeffs_.lookup("b1")),
-    b2_(QuemadaCoeffs_.lookup("b2")),
-    b3_(QuemadaCoeffs_.lookup("b3")),
-    c0_(QuemadaCoeffs_.lookup("c0")),
-    c1_(QuemadaCoeffs_.lookup("c1")),
-    c2_(QuemadaCoeffs_.lookup("c2")),
-    c3_(QuemadaCoeffs_.lookup("c3")),
-    
-    gammaC0_(QuemadaCoeffs_.lookup("gammaC0")),
-    muPlasma_(QuemadaCoeffs_.lookup("muPlasma")),
-	rho_(viscosityProperties.lookup("rho")),
-   
-    nu_
-    (
-        IOobject
+ const word& name,
+ const dictionary& viscosityProperties,
+ const volVectorField& U,
+ const surfaceScalarField& phi
+ )
+    :
+        viscosityModel(name, viscosityProperties, U, phi),
+        QuemadaCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
+
+        a0_(QuemadaCoeffs_.lookup("a0")),
+        a1_(QuemadaCoeffs_.lookup("a1")),
+        b0_(QuemadaCoeffs_.lookup("b0")),
+        b1_(QuemadaCoeffs_.lookup("b1")),
+        b2_(QuemadaCoeffs_.lookup("b2")),
+        b3_(QuemadaCoeffs_.lookup("b3")),
+        c0_(QuemadaCoeffs_.lookup("c0")),
+        c1_(QuemadaCoeffs_.lookup("c1")),
+        c2_(QuemadaCoeffs_.lookup("c2")),
+        c3_(QuemadaCoeffs_.lookup("c3")),
+
+        gammaC0_(QuemadaCoeffs_.lookup("gammaC0")),
+        muPlasma_(QuemadaCoeffs_.lookup("muPlasma")),
+        rho_(viscosityProperties.lookup("rho")),
+
+        nu_
         (
-            "nu",
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        calcNu()
-    )
+         IOobject
+         (
+          "nu",
+          U_.time().timeName(),
+          U_.db(),
+          IOobject::NO_READ,
+          IOobject::AUTO_WRITE
+         ),
+         calcNu()
+        )
 {}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-bool Foam::viscosityModels::Quemada::read
+    bool Foam::viscosityModels::Quemada::read
 (
-    const dictionary& viscosityProperties
-)
+ const dictionary& viscosityProperties
+ )
 {
     viscosityModel::read(viscosityProperties);
 
@@ -155,12 +155,12 @@ bool Foam::viscosityModels::Quemada::read
     QuemadaCoeffs_.lookup("c1") >> c1_;
     QuemadaCoeffs_.lookup("c2") >> c2_;
     QuemadaCoeffs_.lookup("c3") >> c3_;
-    
+
     QuemadaCoeffs_.lookup("gammaC0") >> gammaC0_;
     QuemadaCoeffs_.lookup("muPlasma") >> muPlasma_;
-    
+
     viscosityProperties.lookup("rho") >> rho_;
-    
+
     return true;
 }
 
