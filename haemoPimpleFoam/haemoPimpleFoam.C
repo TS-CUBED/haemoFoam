@@ -25,19 +25,19 @@ Application
     haemoSimpleFoam
 
 Description
-    Transient solver for incompressible, turbulent flow 
+    Transient solver for incompressible, turbulent flow
     of non-Newtonian high particle load suspension fluids, using
     the PIMPLE (merged PISO-SIMPLE) algorithm.
-    
+
     Developed for modelling the shear thinning and hematocrit transport
     in blood flow.
-    
+
     Uses particle transport
     equation based on (Phillips, Armstrong et al. 1992):
-    
-    PHILLIPS, R.J., ARMSTRONG, R.C., BROWN, R.A., GRAHAM, A.L. and 
+
+    PHILLIPS, R.J., ARMSTRONG, R.C., BROWN, R.A., GRAHAM, A.L. and
     * ABBOTT, J.R., 1992.
-       A constitutive equation for concentrated suspensions that accounts for 
+       A constitutive equation for concentrated suspensions that accounts for
        shear‐induced particle migration.
        Physics of Fluids A: Fluid Dynamics, 4(1), pp. 30-40.
 
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 
             }
 
-            turbulence->correct();  
+            turbulence->correct();
 
         }
 

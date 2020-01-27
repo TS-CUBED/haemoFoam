@@ -20,7 +20,7 @@ License
 
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
-    
+
 \*---------------------------------------------------------------------------*/
 
 #include "Quemada.H"
@@ -49,7 +49,7 @@ namespace Foam
 Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::Quemada::calcNu() const
 {
-    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
+    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H");
 
     return muPlasma_/rho_ *
         pow
@@ -59,7 +59,7 @@ Foam::viscosityModels::Quemada::calcNu() const
           // K: Quemada Parameter
           (
            (
-            (a0_+2/(a1_+H))                                   // k0 
+            (a0_+2/(a1_+H))                                   // k0
             +
             exp(b0_+b1_*H+b2_*pow(H,2.0)+b3_*pow(H,3.0))        // kInf
             *sqrt
@@ -77,7 +77,7 @@ Foam::viscosityModels::Quemada::calcNu() const
             (
              strainRate()/
              (
-              exp(c0_+c1_*H+c2_*pow(H,2.0)+c3_*pow(H,3.0))        
+              exp(c0_+c1_*H+c2_*pow(H,2.0)+c3_*pow(H,3.0))
               *gammaC0_                                        // gammaC
              )
             )
@@ -87,7 +87,7 @@ Foam::viscosityModels::Quemada::calcNu() const
            *H
            ),-2
            )
-           ;             
+           ;
 }
 
 

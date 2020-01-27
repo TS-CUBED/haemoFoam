@@ -49,10 +49,10 @@ namespace Foam
 Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::Krieger5::calcNu() const
 {
-    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
+    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H");
 
-    return muPlasma_/rho_ * 
-        pow((1-H/Hcrit_),-1*((a_+b_*exp(-1*c_*H)+beta_*pow((1+pow(lambda_*strainRate(),2)),(-1*nuK_)))));                                 
+    return muPlasma_/rho_ *
+        pow((1-H/Hcrit_),-1*((a_+b_*exp(-1*c_*H)+beta_*pow((1+pow(lambda_*strainRate(),2)),(-1*nuK_)))));
 }
 
 
@@ -110,7 +110,7 @@ Foam::viscosityModels::Krieger5::calcNu() const
 
     Krieger5Coeffs_ = viscosityProperties.subDict(typeName + "Coeffs");
 
-    Krieger5Coeffs_.lookup("a") >> a_;    
+    Krieger5Coeffs_.lookup("a") >> a_;
     Krieger5Coeffs_.lookup("b") >> b_;
     Krieger5Coeffs_.lookup("c") >> c_;
 

@@ -14,25 +14,25 @@
          )
         );
 
-    dimensionedScalar a   
+    dimensionedScalar a
         (haemoTransportProperties.lookup("a"));
-    dimensionedScalar Kc  
+    dimensionedScalar Kc
         (haemoTransportProperties.lookup("Kc"));
-    dimensionedScalar Kmu 
+    dimensionedScalar Kmu
         (haemoTransportProperties.lookup("Kmu"));
 
-    dimensionedScalar haemoSwitch 
+    dimensionedScalar haemoSwitch
         (haemoTransportProperties.lookup("haemoSwitch"));
     dimensionedScalar haemoSwitchTime
         (haemoTransportProperties.lookup("haemoSwitchTime"));
 
     dimensionedScalar haemoSw = haemoSwitch;
 
-    dimensionedScalar linKc 
+    dimensionedScalar linKc
         (haemoTransportProperties.lookup("linKc"));
     dimensionedScalar nonlinKc
         (haemoTransportProperties.lookup("nonlinKc"));
-    dimensionedScalar nonlinKcRatio 
+    dimensionedScalar nonlinKcRatio
         (haemoTransportProperties.lookup("nonlinKcRatio"));
 
     // this should actually be in transportProperties, not here!
@@ -41,22 +41,22 @@
 
 
     if (linKc.value() == 1.0 && nonlinKc.value() == 0.0) {
-        Info << "linear Kc selected" << nl << Kmu 
+        Info << "linear Kc selected" << nl << Kmu
             << nl << Kc << nl << endl;
     }
     else if (linKc.value() == 0.0 && nonlinKc.value() == 1.0) {
-        Info << "non-linear Kc selected" << nl << Kmu << nl 
-            << nonlinKcRatio << nl << endl; 
+        Info << "non-linear Kc selected" << nl << Kmu << nl
+            << nonlinKcRatio << nl << endl;
     }
     else {
         Info << "Inconsistent Kc settings! If this is what you want, that's fine." << nl <<
-            "But it may not give useful results:" << nl 
-            << Kmu << nl 
-            << Kc << nl 
+            "But it may not give useful results:" << nl
+            << Kmu << nl
+            << Kc << nl
             << linKc << nl
-            << nonlinKc << nl 
+            << nonlinKc << nl
             << nonlinKcRatio << nl << endl;
-    }      
+    }
 
 
-    // Back to original code 
+    // Back to original code

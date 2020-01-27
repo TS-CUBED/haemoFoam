@@ -27,7 +27,7 @@ KriegerDoughertyCoeffs
     n               n           [ 0 0 0 0 0 0 0 ]       1.82;
 
     Hcrit           Hcrit       [ 0 0 0 0 0 0 0 ]       0.67;
-    muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;    
+    muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;
 }
 
 Krieger5Coeffs
@@ -36,11 +36,11 @@ Krieger5Coeffs
     b               b           [ 0 0 0 0 0 0 0 ]        8.781;
     c               c           [ 0 0 0 0 0 0 0 ]        2.824;
 
-    beta            beta        [ 0 0 0 0 0 0 0 ]        16.1;    
+    beta            beta        [ 0 0 0 0 0 0 0 ]        16.1;
     lambda          lambda_     [ 0 0 1 0 0 0 0 ]        1206;
     nuK             nuK         [ 0 0 0 0 0 0 0 ]        0.1427;
 
-    muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;    
+    muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;
     Hcrit           Hcrit       [ 0 0 0 0 0 0 0 ]        0.98;
 }
 
@@ -60,6 +60,6 @@ QuemadaCoeffs
     c3              c3          [ 0 0 0 0 0 0 0 ]       14.1;
 
     gammaC0         gammaC0     [ 0 0 -1 0 0 0 0 ]      1.0;    //needed for dimension only leave at 1.0!
-    muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;    
+    muPlasma        muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;
 }
 // ************************************************************************* //

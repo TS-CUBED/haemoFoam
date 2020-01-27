@@ -49,10 +49,10 @@ namespace Foam
 Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::Carreau::calcNu() const
 {
-    //    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
+    //    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H");
 
-    return muInf_/rho_ + 
-        (mu0_ - muInf_)/rho_ * pow((1.0 + pow(strainRate()*lambda_,2)),((n_ - 1)/2)); 
+    return muInf_/rho_ +
+        (mu0_ - muInf_)/rho_ * pow((1.0 + pow(strainRate()*lambda_,2)),((n_ - 1)/2));
 }
 
 
@@ -104,7 +104,7 @@ Foam::viscosityModels::Carreau::calcNu() const
 
     CarreauCoeffs_ = viscosityProperties.subDict(typeName + "Coeffs");
 
-    CarreauCoeffs_.lookup("n") >> n_;    
+    CarreauCoeffs_.lookup("n") >> n_;
 
     CarreauCoeffs_.lookup("lambda") >> lambda_;
 

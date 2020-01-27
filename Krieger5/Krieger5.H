@@ -28,10 +28,10 @@ Class
 Description
     An incompressible 5-Parameter modified Krieger non-Newtonian viscosity
     model following
-	
-	Hund, S.; Kamenenva, M.; Antaki, J.
-	A Quasi-Mechanistic Mathematical Representation for Blood Viscosity
-	Fluids 2017, 2, 10; doi:10.3390/fluids2010010
+
+    Hund, S.; Kamenenva, M.; Antaki, J.
+    A Quasi-Mechanistic Mathematical Representation for Blood Viscosity
+    Fluids 2017, 2, 10; doi:10.3390/fluids2010010
 
 
 Created by

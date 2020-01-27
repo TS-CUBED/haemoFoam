@@ -26,12 +26,12 @@ Class
 
 Description
     Non-Newtonian model for blood based on:
-    
+
     QUEMADA, D., 1978. Rheology of concentrated disperse systems III.
-        General features of the proposed non-newtonian model. 
+        General features of the proposed non-newtonian model.
         Comparison with experimental data.
         Rheologica Acta, 17(6), pp. 643-653.
-    
+
 Author and Copyright
     Dr Torsten Schenkel
     Department Engineering and Mathematics

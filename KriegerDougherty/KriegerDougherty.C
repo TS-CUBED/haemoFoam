@@ -49,9 +49,9 @@ namespace Foam
 Foam::tmp<Foam::volScalarField>
 Foam::viscosityModels::KriegerDougherty::calcNu() const
 {
-    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H"); 
+    const volScalarField& H= U_.mesh().lookupObject<volScalarField>("H");
 
-    return muPlasma_/rho_*pow((1-H/Hcrit_),(-1*n_));   
+    return muPlasma_/rho_*pow((1-H/Hcrit_),(-1*n_));
 }
 
 
