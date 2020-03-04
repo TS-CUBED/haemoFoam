@@ -25,24 +25,24 @@ Application
     haemoSimpleFoam
 
 Description
-    Steady state solver for incompressible, turbulent flow 
+    Steady state solver for incompressible, turbulent flow
     of non-Newtonian high particle load suspension fluids, using
     the SIMPLE algorithm.
-    
+
     Developed for modelling the shear thinning and hematocrit transport
     in blood flow.
-    
+
     Uses particle transport
     equation based on (Phillips, Armstrong et al. 1992):
-    
-    PHILLIPS, R.J., ARMSTRONG, R.C., BROWN, R.A., GRAHAM, A.L. and 
+
+    PHILLIPS, R.J., ARMSTRONG, R.C., BROWN, R.A., GRAHAM, A.L. and
     * ABBOTT, J.R., 1992.
-       A constitutive equation for concentrated suspensions that accounts for 
+       A constitutive equation for concentrated suspensions that accounts for
        shear‐induced particle migration.
        Physics of Fluids A: Fluid Dynamics, 4(1), pp. 30-40.
 
     QUEMADA, D., 1978. Rheology of concentrated disperse systems III.
-        General features of the proposed non-newtonian model. 
+        General features of the proposed non-newtonian model.
         Comparison with experimental data.
         Rheologica Acta, 17(6), pp. 643-653.
 

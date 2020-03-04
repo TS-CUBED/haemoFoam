@@ -25,23 +25,23 @@ Application
 
 Description
     Calculates and writes WSS derived metrics for haemodynamic cases
-    
-    
+
+
     WSS: kinematic WSS, gradient of U at the wall, multiplied with local
     * kinematic viscosity
-    
+
     avgWSS: average kinematic WSS for the time range
-    
+
     OSI: Oscillatory Shear Stress Index
-    
+
     transWSS: Transverse kinematic WSS
-    
+
     Be aware that all WSS calculations are using kinematic values in
     * accordance to FOAMs stress and pressure definiutions.
     * To get the commonly used dynamic values, multiply with density,
-    * just as you would for the pressure (which in FOAM is kinematic, 
+    * just as you would for the pressure (which in FOAM is kinematic,
     * as well)
-    
+
 Author
 	Dr Torsten Schenkel
     Department Engineering and Mathematics
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
           sqr(dimLength)/sqr(dimTime),
           0
          )
-        );	
+        );
 
     volScalarField TAWSSMag
         (
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
           sqr(dimTime)/sqr(dimLength),
           0
          )
-        );	
+        );
 
     volScalarField TAHct
         (
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
     // First run, calculate WSS, avgWSS and OSI
 
 
-    Info<< "First Run - calculating WSS, average WSS, OSI, RRT" << endl;	
+    Info<< "First Run - calculating WSS, average WSS, OSI, RRT" << endl;
 
     forAll(timeDirs, timeI)
     {
@@ -395,7 +395,7 @@ int main(int argc, char *argv[])
         else
         {
             Info<< "    No U_0" << endl;
-        }	
+        }
     }
 
     Info<< "Writing TAWSS, TAWSSMag, OSI, RRT, normalVectors" << endl;
@@ -427,8 +427,8 @@ int main(int argc, char *argv[])
             normalVector.boundaryField()[patchi] =
                 mesh.Sf().boundaryField()[patchi]
                 /mesh.magSf().boundaryField()[patchi]
-                ;	
-        }		
+                ;
+        }
     }
 
     TAWSS.write();
@@ -440,7 +440,7 @@ int main(int argc, char *argv[])
 
     // Second run, calculate transWSS
 
-    Info<< "Second Run - calculating transWSS" << endl;	
+    Info<< "Second Run - calculating transWSS" << endl;
 
     nfield = 0;
 
@@ -467,7 +467,7 @@ int main(int argc, char *argv[])
 
 
             forAll(transWSS.boundaryField(), patchi)
-            {	
+            {
                 transWSS.boundaryField()[patchi] +=
                     mag(
                             WSS.boundaryField()[patchi]
@@ -501,14 +501,14 @@ int main(int argc, char *argv[])
         forAll(transWSS.boundaryField(), patchi)
         {
             transWSS.boundaryField()[patchi] /= nfield;
-        }		
+        }
     }
 
     transWSS.write();
 
     // Third run, calculate TAHct
 
-    Info<< "Third Run - calculating time averaged Haematocrit TAHct" << endl;	
+    Info<< "Third Run - calculating time averaged Haematocrit TAHct" << endl;
 
     nfield = 0;
 
@@ -534,7 +534,7 @@ int main(int argc, char *argv[])
             volScalarField H(Hheader, mesh);
 
             forAll(TAHct.boundaryField(), patchi)
-            {	
+            {
                 TAHct.boundaryField()[patchi] +=
                     H.boundaryField()[patchi];
             }
@@ -557,7 +557,7 @@ int main(int argc, char *argv[])
         forAll(TAHct.boundaryField(), patchi)
         {
             TAHct.boundaryField()[patchi] /= nfield;
-        }		
+        }
     }
 
     TAHct.write();

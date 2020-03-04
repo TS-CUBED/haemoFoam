@@ -26,7 +26,7 @@ Class
 
 Description
     An incompressible Krieger-Dougherty non-Newtonian viscosity model.
-    
+
 Author and Copyright
     Dr Torsten Schenkel
     Department Engineering and Mathematics
