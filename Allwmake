@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ~/foam/foam-extend-4.1/etc/bashrc
+source ~/foam/foam-extend-4.0/etc/bashrc
 
 apps="haemoSimpleFoam haemoPisoFoam haemoPimpleFoam haemoPostProcess"
 libs="KriegerDougherty Krieger5 Quemada Carreau"
