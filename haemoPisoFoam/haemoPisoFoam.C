@@ -146,12 +146,6 @@ int main(int argc, char *argv[])
                         phi -= pEqn.flux();
                     }
 
-                    //                  Calculate H equation
-
-#                   include "HEqn.H"
-
-                    //                  Back to original code
-
                 }
 
 #               include "continuityErrs.H"
@@ -162,6 +156,12 @@ int main(int argc, char *argv[])
         }
 
         turbulence->correct();
+
+        //                  Calculate H equation
+
+#       include "HEqn.H"
+
+        //                  Back to original code
 
         runTime.write();
 
