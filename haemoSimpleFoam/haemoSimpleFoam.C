@@ -102,12 +102,23 @@ int main(int argc, char *argv[])
 #           include "UEqn.H"
 #           include "pEqn.H"
 
-            // Calculate H equation
 
-#			include "HEqn.H"
+        }
 
-            // Back to original code
+        // Calculate H equation
 
+#	    include "HEqn.H"
+
+        // Back to original code
+        
+        if (haemoSwitch.value() == 0 || runTime < haemoSwitchTime)
+        {
+            Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
+        } else
+        {
+            HEqn.relax();                   // use these two lines
+            HEqn.solve().initialResidual(); // for underrelaxed solver
+            // HEqn.solve(); // or this one for no underrelaxation (unstable)
         }
 
         turbulence->correct();  // update viscosity
