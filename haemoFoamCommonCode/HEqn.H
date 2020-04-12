@@ -33,12 +33,3 @@ diffHnonlin      = fvc::laplacian(nonlinKc*nonlinKcRatio*Kmu*H*sqr(a)*H*gammaDot
      + sourceV
     );
 
-if (haemoSwitch.value() == 0 || runTime < haemoSwitchTime)
-{
-    Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
-} else
-{
-    HEqn.relax();                   // use these two lines
-    HEqn.solve().initialResidual(); // for underrelaxed solver
-    // HEqn.solve(); // or this one for no underrelaxation (unstable)
-}

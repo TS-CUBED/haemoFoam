@@ -146,12 +146,6 @@ int main(int argc, char *argv[])
                         phi -= pEqn.flux();
                     }
 
-                    //                  Calculate H equation
-
-#                   include "HEqn.H"
-
-                    //                  Back to original code
-
                 }
 
 #               include "continuityErrs.H"
@@ -162,6 +156,22 @@ int main(int argc, char *argv[])
         }
 
         turbulence->correct();
+
+        //                  Calculate H equation
+
+#       include "HEqn.H"
+
+        if (haemoSwitch.value() == 0 || runTime < haemoSwitchTime)
+        {
+            Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
+        } else
+        {
+            // HEqn.relax();                   // use these two lines
+            // HEqn.solve().initialResidual(); // for underrelaxed solver
+            HEqn.solve(); // or this one for no underrelaxation (unstable for SIMPLE)
+        }
+
+        //                  Back to original code
 
         runTime.write();
 
