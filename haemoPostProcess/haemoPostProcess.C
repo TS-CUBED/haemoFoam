@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
          dimensionedVector
          (
           "TAWSS",
-          dimMass/(dimLength*dimTime),
+          dimMass/(dimLength*sqr(dimTime)),
           //sqr(dimLength)/sqr(dimTime),
           vector::zero
          )
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
          dimensionedScalar
          (
           "transWSS",
-          dimMass/(dimLength*dimTime),
+          dimMass/(dimLength*sqr(dimTime)),
           //sqr(dimLength)/sqr(dimTime),
           0
          )
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
          dimensionedScalar
          (
           "TAWSSMag",
-          dimMass/(dimLength*dimTime),
+          dimMass/(dimLength*sqr(dimTime)),
           //sqr(dimLength)/sqr(dimTime),
           0
          )
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
          dimensionedScalar
          (
           "RRT",
-          (dimLength*dimTime)/dimMass,
+          (dimLength*sqr(dimTime))/dimMass,
           //sqr(dimTime)/sqr(dimLength),
           0
          )
@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
                      dimensionedVector
                      (
                       "WSS_0",
-                      dimMass/(dimLength*dimTime),
+                      dimMass/(dimLength*sqr(dimTime)),
                       //sqr(dimLength)/sqr(dimTime),
                       vector::zero
                      )
@@ -448,19 +448,51 @@ int main(int argc, char *argv[])
                      dimensionedScalar
                      (
                       "WSS_0Mag",
-                      dimMass/(dimLength*dimTime),
+                      dimMass/(dimLength*sqr(dimTime)),
                       //sqr(dimLength)/sqr(dimTime),
                       0
                      )
                     );
 
+                volTensorField shearStress
+                    (
+                     IOobject
+                     (
+                      "shearStress",
+                      runTime.timeName(),
+                      mesh,
+                      IOobject::NO_READ,
+                      IOobject::AUTO_WRITE
+                     ),
+                     mesh,
+                     dimensionedTensor
+                     (
+                      "shearStress",
+                      dimMass/(dimLength*sqr(dimTime)),
+                      //sqr(dimLength)/sqr(dimTime),
+                      tensor::zero
+                     )
+                    );
+
+                volTensorField UGrad = 
+                   // 2 * nu.value() * rho.value() * 
+                    (fvc::grad(U_0)); 
+
+                shearStress = 
+                    nu * rho *
+                    (
+                     UGrad + UGrad.T()
+                    );
 
                 forAll(WSS_0.boundaryField(), patchi)
                 {
                     WSS_0.boundaryField()[patchi] =
-                        -U_0.boundaryField()[patchi].snGrad()
-                        * nu.boundaryField()[patchi]
-                        * rho.value();
+                        (
+                         -mesh.Sf().boundaryField()[patchi]
+                        /mesh.magSf().boundaryField()[patchi]
+                        )
+                        &
+                        shearStress.boundaryField()[patchi];
                 }
                 WSS_0.write();
             }
