@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
                      dimensionedVector
                      (
                       "WSS",
-                      dimMass/(dimLength*dimTime),
+                      dimMass/(dimLength*sqr(dimTime)),
                       //sqr(dimLength)/sqr(dimTime),
                       vector::zero
                      )
@@ -312,34 +312,75 @@ int main(int argc, char *argv[])
                      dimensionedScalar
                      (
                       "WSSMag",
-                      dimMass/(dimLength*dimTime),
+                      dimMass/(dimLength*sqr(dimTime)),
                       //sqr(dimLength)/sqr(dimTime),
                       0
                      )
                     );
 
+                volTensorField shearStress
+                    (
+                     IOobject
+                     (
+                      "shearStress",
+                      runTime.timeName(),
+                      mesh,
+                      IOobject::NO_READ,
+                      IOobject::AUTO_WRITE
+                     ),
+                     mesh,
+                     dimensionedTensor
+                     (
+                      "shearStress",
+                      dimMass/(dimLength*sqr(dimTime)),
+                      //sqr(dimLength)/sqr(dimTime),
+                      tensor::zero
+                     )
+                    );
+
+                volTensorField UGrad = 
+                   // 2 * nu.value() * rho.value() * 
+                    (fvc::grad(U)); 
+
+                shearStress = 
+                    nu * rho *
+                    (
+                     UGrad + UGrad.T()
+                    );
 
                 forAll(WSS.boundaryField(), patchi)
                 {
+
                     WSS.boundaryField()[patchi] =
-                        -U.boundaryField()[patchi].snGrad()
-                        * nu.boundaryField()[patchi]
-                        * rho.value();
+                        (
+                         -mesh.Sf().boundaryField()[patchi]
+                        /mesh.magSf().boundaryField()[patchi]
+                        )
+                        &
+                        shearStress.boundaryField()[patchi];
 
                     WSSMag.boundaryField()[patchi] =
-                        mag(-U.boundaryField()[patchi].snGrad()
-                                * nu.boundaryField()[patchi])
-                        * rho.value();
-
+                        mag((
+                         -mesh.Sf().boundaryField()[patchi]
+                        /mesh.magSf().boundaryField()[patchi]
+                        )
+                        &
+                        shearStress.boundaryField()[patchi]);
                     TAWSS.boundaryField()[patchi] +=
-                        -U.boundaryField()[patchi].snGrad()
-                        * nu.boundaryField()[patchi]
-                        * rho.value();
+                        (
+                         -mesh.Sf().boundaryField()[patchi]
+                        /mesh.magSf().boundaryField()[patchi]
+                        )
+                        &
+                        shearStress.boundaryField()[patchi];
 
                     TAWSSMag.boundaryField()[patchi] +=
-                        mag(-U.boundaryField()[patchi].snGrad()
-                                * nu.boundaryField()[patchi])
-                        * rho.value();
+                        mag((
+                         -mesh.Sf().boundaryField()[patchi]
+                        /mesh.magSf().boundaryField()[patchi]
+                        )
+                        &
+                        shearStress.boundaryField()[patchi]);
                 }
                 WSS.write();
                 WSSMag.write();

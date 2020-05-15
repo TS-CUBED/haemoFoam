@@ -110,7 +110,6 @@ int main(int argc, char *argv[])
 
             }
 
-           
             // Calculate H equation
 
 #			include "HEqn.H"
@@ -128,6 +127,7 @@ int main(int argc, char *argv[])
 
             // Back to original code
 
+           
             turbulence->correct();
 
         }
