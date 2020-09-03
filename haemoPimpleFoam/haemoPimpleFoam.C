@@ -120,9 +120,14 @@ int main(int argc, char *argv[])
                 Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
             } else
             {
-                HEqn.relax();                   // use these two lines
-                HEqn.solve().initialResidual(); // for underrelaxed solver
-                // HEqn.solve(); // or this one for no underrelaxation (unstable for SIMPLE)
+                if (!pimple.finalIter())
+                {
+                    HEqn.relax();                   // use these two lines
+                    HEqn.solve().initialResidual(); // for underrelaxed solver
+                } else
+                {
+                    HEqn.solve(); // or this one for no underrelaxation (unstable for SIMPLE)
+                }
             }
 
             // Back to original code
