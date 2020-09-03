@@ -127,6 +127,7 @@ int main(int argc, char *argv[])
                 } else
                 {
                     HEqn.solve(); // or this one for no underrelaxation (unstable for SIMPLE)
+                    Info<< "Last PIMPLE iteration, no underrelaxation!" << nl << endl;
                 }
             }
 
