@@ -62,7 +62,7 @@ Author and Copyright
 int main(int argc, char *argv[])
 {
     timeSelector::addOptions();
-#include "setRootCase.H"
+#   include "setRootCase.H"
 #   include "createTime.H"
     instantList timeDirs = timeSelector::select0(runTime, args);
 #   include "createMesh.H"
@@ -229,7 +229,6 @@ int main(int argc, char *argv[])
 
     // First run, calculate WSS, avgWSS and OSI
 
-
     Info<< "First Run - calculating WSS, average WSS, OSI, RRT" << endl;
 
     forAll(timeDirs, timeI)
@@ -261,11 +260,11 @@ int main(int argc, char *argv[])
              IOobject::MUST_READ
             );
 
-        // Check U exists
-        if (Uheader.headerOk())
-        {
-            if (nuheader.headerOk())
-            {
+        // // Check U exists
+        // if (Uheader.headerOk())
+        // {
+        //     if (nuheader.headerOk())
+        //     {
                 mesh.readUpdate();
 
                 Info<< "    Reading U" << endl;
@@ -348,22 +347,22 @@ int main(int argc, char *argv[])
                 Info<< "\x1b[A \x1b[A \x1b[A \x1b[A" << endl;
 
                 nfield++;
-            }
-            else
-            {
-                Info<< "    No nu" << endl;
-            }
-        }
-        else
-        {
-            Info<< "    No U" << endl;
-        }
+        //     }
+        //     else
+        //     {
+        //         Info<< "    No nu" << endl;
+        //     }
+        // }
+        // else
+        // {
+        //     Info<< "    No U" << endl;
+        // }
 
         // Check U_0 exists for TWSSG
-        if (U_0header.headerOk())
-        {
-            if (nuheader.headerOk())
-            {
+        // if (U_0header.headerOk())
+        // {
+        //     if (nuheader.headerOk())
+        //     {
                 mesh.readUpdate();
 
                 Info<< "    Reading U_0" << endl;
@@ -422,16 +421,16 @@ int main(int argc, char *argv[])
                         * rho.value();
                 }
                 WSS_0.write();
-            }
-            else
-            {
-                Info<< "    Nu nu" << endl;
-            }
-        }
-        else
-        {
-            Info<< "    No U_0" << endl;
-        }
+        //     }
+        //     else
+        //     {
+        //         Info<< "    Nu nu" << endl;
+        //     }
+        // }
+        // else
+        // {
+        //     Info<< "    No U_0" << endl;
+        // }
     }
 
     Info<< "Writing TAWSS, TAWSSMag, OSI, RRT, normalVectors" << endl;
@@ -494,8 +493,8 @@ int main(int argc, char *argv[])
             );
 
         // Check WSS exist
-        if (WSSheader.headerOk())
-        {
+        // if (WSSheader.headerOk())
+        // {
             mesh.readUpdate();
 
             Info<< "    Reading WSS" << endl;
@@ -521,10 +520,10 @@ int main(int argc, char *argv[])
 
             nfield++;
         }
-        else
-        {
-            Info<< "    No WSS" << endl;
-        }
+        // else
+        // {
+        //     Info<< "    No WSS" << endl;
+        // }
     }
 
 
@@ -562,8 +561,8 @@ int main(int argc, char *argv[])
             );
 
         // Check H exist
-        if (Hheader.headerOk())
-        {
+        // if (Hheader.headerOk())
+        // {
             mesh.readUpdate();
 
             Info<< "    Reading H" << endl;
@@ -577,10 +576,10 @@ int main(int argc, char *argv[])
 
             nfield++;
         }
-        else
-        {
-            Info<< "    No H" << endl;
-        }
+        // else
+        // {
+        //     Info<< "    No H" << endl;
+        // }
     }
 
 

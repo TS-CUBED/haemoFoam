@@ -37,8 +37,13 @@
     label pRefCell = 0;
     scalar pRefValue = 0.0;
     setRefCell(p, pimple.dict(), pRefCell, pRefValue);
+    
+#ifdef OPENFOAMESIORFOUNDATION
+    mesh.setFluxRequired(p.name());
+#else
     mesh.schemesDict().setFluxRequired(p.name());
-
+#endif
+    
     singlePhaseTransportModel laminarTransport(U, phi);
 
     autoPtr<incompressible::turbulenceModel> turbulence
@@ -46,6 +51,10 @@
          incompressible::turbulenceModel::New(U, phi, laminarTransport)
         );
 
+#ifdef OPENFOAMESIORFOUNDATION
+    #include "createMRF.H"
+    #include "createFvOptions.H"
+#else
     Info<< "Reading field aU if present\n" << endl;
     volScalarField aU
         (
@@ -61,3 +70,4 @@
          1/runTime.deltaT(),
          zeroGradientFvPatchScalarField::typeName
         );
+#endif
