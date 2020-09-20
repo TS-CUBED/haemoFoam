@@ -65,6 +65,9 @@ Author and Copyright
     #include "turbulentTransportModel.H"
     #include "CorrectPhi.H"
     #include "fvOptions.H"
+    #include "localEulerDdtScheme.H"
+    #include "fvcSmooth.H"
+    // Windkessel includes:
     #include "fixedFluxPressureFvPatchScalarField.H"
     #include "scalarIOList.H"
     #include "WKFunctions.C"   // Windkessel function file

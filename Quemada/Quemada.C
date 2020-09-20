@@ -117,7 +117,7 @@ Foam::viscosityModels::Quemada::calcNu() const
 
         gammaC0_(QuemadaCoeffs_.lookup("gammaC0")),
         muPlasma_(QuemadaCoeffs_.lookup("muPlasma")),
-        rho_(viscosityProperties.lookup("rho")),
+        rho_("rho", dimDensity, viscosityProperties),
 
         nu_
         (
@@ -158,6 +158,8 @@ Foam::viscosityModels::Quemada::calcNu() const
 
     QuemadaCoeffs_.lookup("gammaC0") >> gammaC0_;
     QuemadaCoeffs_.lookup("muPlasma") >> muPlasma_;
+
+    // QuemadaCoeffs_.lookup("rho") >> rho_;
 
     viscosityProperties.lookup("rho") >> rho_;
 
