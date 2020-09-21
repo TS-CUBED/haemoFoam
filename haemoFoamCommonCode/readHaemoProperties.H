@@ -35,11 +35,6 @@
     dimensionedScalar nonlinKcRatio
         (haemoTransportProperties.lookup("nonlinKcRatio"));
 
-    // this should actually be in transportProperties, not here!
-    //dimensionedScalar density
-    //(haemoTransportProperties.lookup("density"));
-
-
     if (linKc.value() == 1.0 && nonlinKc.value() == 0.0) {
         Info << "linear Kc selected" << nl << Kmu
             << nl << Kc << nl << endl;

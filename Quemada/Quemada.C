@@ -104,6 +104,7 @@ Foam::viscosityModels::Quemada::calcNu() const
         viscosityModel(name, viscosityProperties, U, phi),
         QuemadaCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
 
+#ifdef OPENFOAMESIORFOUNDATION
         a0_(QuemadaCoeffs_.lookup("a0")),
         a1_(QuemadaCoeffs_.lookup("a1")),
         b0_(QuemadaCoeffs_.lookup("b0")),
@@ -117,7 +118,26 @@ Foam::viscosityModels::Quemada::calcNu() const
 
         gammaC0_(QuemadaCoeffs_.lookup("gammaC0")),
         muPlasma_(QuemadaCoeffs_.lookup("muPlasma")),
+        
         rho_("rho", dimDensity, viscosityProperties),
+#else
+        a0_(QuemadaCoeffs_.lookup("a0")),
+        a1_(QuemadaCoeffs_.lookup("a1")),
+        b0_(QuemadaCoeffs_.lookup("b0")),
+        b1_(QuemadaCoeffs_.lookup("b1")),
+        b2_(QuemadaCoeffs_.lookup("b2")),
+        b3_(QuemadaCoeffs_.lookup("b3")),
+        c0_(QuemadaCoeffs_.lookup("c0")),
+        c1_(QuemadaCoeffs_.lookup("c1")),
+        c2_(QuemadaCoeffs_.lookup("c2")),
+        c3_(QuemadaCoeffs_.lookup("c3")),
+
+        gammaC0_(QuemadaCoeffs_.lookup("gammaC0")),
+        muPlasma_(QuemadaCoeffs_.lookup("muPlasma")),
+
+        rho_(viscosityProperties.lookup("rho")),
+#endif
+
 
         nu_
         (

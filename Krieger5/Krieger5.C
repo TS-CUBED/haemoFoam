@@ -81,8 +81,12 @@ Foam::viscosityModels::Krieger5::calcNu() const
         muPlasma_(Krieger5Coeffs_.lookup("muPlasma")),
 
         Hcrit_(Krieger5Coeffs_.lookup("Hcrit")),
-
+        
+#ifdef OPENFOAMESIORFOUNDATION
+        rho_("rho", dimDensity, viscosityProperties),
+#else
         rho_(viscosityProperties.lookup("rho")),
+#endif
 
         nu_
         (

@@ -73,7 +73,11 @@ Foam::viscosityModels::KriegerDougherty::calcNu() const
 
         Hcrit_(KriegerDoughertyCoeffs_.lookup("Hcrit")),
 
+#ifdef OPENFOAMESIORFOUNDATION
+        rho_("rho", dimDensity, viscosityProperties),
+#else
         rho_(viscosityProperties.lookup("rho")),
+#endif
 
         nu_
         (
