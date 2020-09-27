@@ -1,3 +1,7 @@
+#ifdef OPENFOAMESIORFOUNDATION
+    #include "createRDeltaT.H"
+#endif
+
     Info<< "Reading field p\n" << endl;
     volScalarField p
         (
@@ -26,11 +30,11 @@
          mesh
         );
 
-#include "createPhi.H"
+    #include "createPhi.H"
 
     // Create fields for haematocrit transport model
 
-#   include "createFields_H_gammadot.H"
+    #include "createFields_H_gammadot.H"
 
     // Back to original code
 

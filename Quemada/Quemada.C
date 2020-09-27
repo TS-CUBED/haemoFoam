@@ -105,19 +105,19 @@ Foam::viscosityModels::Quemada::calcNu() const
         QuemadaCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
 
 #ifdef OPENFOAMESIORFOUNDATION
-        a0_(QuemadaCoeffs_.lookup("a0")),
-        a1_(QuemadaCoeffs_.lookup("a1")),
-        b0_(QuemadaCoeffs_.lookup("b0")),
-        b1_(QuemadaCoeffs_.lookup("b1")),
-        b2_(QuemadaCoeffs_.lookup("b2")),
-        b3_(QuemadaCoeffs_.lookup("b3")),
-        c0_(QuemadaCoeffs_.lookup("c0")),
-        c1_(QuemadaCoeffs_.lookup("c1")),
-        c2_(QuemadaCoeffs_.lookup("c2")),
-        c3_(QuemadaCoeffs_.lookup("c3")),
+        a0_("a0", dimless, QuemadaCoeffs_),
+        a1_("a1", dimless, QuemadaCoeffs_),
+        b0_("b0", dimless, QuemadaCoeffs_),
+        b1_("b1", dimless, QuemadaCoeffs_),
+        b2_("b2", dimless, QuemadaCoeffs_),
+        b3_("b3", dimless, QuemadaCoeffs_),
+        c0_("c0", dimless, QuemadaCoeffs_),
+        c1_("c1", dimless, QuemadaCoeffs_),
+        c2_("c2", dimless, QuemadaCoeffs_),
+        c3_("c3", dimless, QuemadaCoeffs_),
 
-        gammaC0_(QuemadaCoeffs_.lookup("gammaC0")),
-        muPlasma_(QuemadaCoeffs_.lookup("muPlasma")),
+        gammaC0_("gammaC0", dimless/dimTime, QuemadaCoeffs_),
+        muPlasma_("muPlasma", dimViscosity*dimDensity, QuemadaCoeffs_),
         
         rho_("rho", dimDensity, viscosityProperties),
 #else

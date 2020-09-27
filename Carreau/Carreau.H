@@ -105,6 +105,7 @@ namespace Foam
 
             // Member Functions
 
+#ifdef OPENFOAMESIORFOUNDATION
             //- Return the laminar viscosity
             virtual tmp<volScalarField> nu() const
             {
@@ -116,6 +117,13 @@ namespace Foam
             {
                 return nu_.boundaryField()[patchi];
             }
+#else
+            //- Return the laminar viscosity
+            virtual const volScalarField& nu() const
+            {
+                return nu_;
+            }
+#endif
 
             //- Correct the laminar viscosity
             virtual void correct()

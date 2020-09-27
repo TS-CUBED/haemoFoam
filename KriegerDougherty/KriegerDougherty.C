@@ -68,14 +68,17 @@ Foam::viscosityModels::KriegerDougherty::calcNu() const
         viscosityModel(name, viscosityProperties, U, phi),
         KriegerDoughertyCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
 
+#ifdef OPENFOAMESIORFOUNDATION
+        n_("n", dimless, KriegerDoughertyCoeffs_),
+        muPlasma_("muPlasma", dimViscosity, KriegerDoughertyCoeffs_),
+
+        Hcrit_("Hcrit", dimless, KriegerDoughertyCoeffs_),
+        rho_("rho", dimDensity, viscosityProperties),
+#else
         n_(KriegerDoughertyCoeffs_.lookup("n")),
         muPlasma_(KriegerDoughertyCoeffs_.lookup("muPlasma")),
 
         Hcrit_(KriegerDoughertyCoeffs_.lookup("Hcrit")),
-
-#ifdef OPENFOAMESIORFOUNDATION
-        rho_("rho", dimDensity, viscosityProperties),
-#else
         rho_(viscosityProperties.lookup("rho")),
 #endif
 

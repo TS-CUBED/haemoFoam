@@ -109,6 +109,12 @@ int main(int argc, char *argv[])
     #include "readHaemoProperties.H"
 
 #ifdef OPENFOAMESIORFOUNDATION
+     if (!LTS)
+    {
+        #include "CourantNo.H"
+        #include "setInitialDeltaT.H"
+    }
+
     turbulence->validate();
 #else
     turbulence->correct();
@@ -122,12 +128,22 @@ int main(int argc, char *argv[])
     {
 #ifdef OPENFOAMESIORFOUNDATION
         #include "readDyMControls.H"
+
+        if (LTS)
+        {
+            #include "setRDeltaT.H"
+        }
+        else
+        {
+            #include "CourantNo.H"
+            #include "setDeltaT.H"
+        }
 #else
         #include "readTimeControls.H"
-#endif
-        
+
         #include "CourantNo.H"
         #include "setDeltaT.H"
+#endif
             
         runTime++;
 

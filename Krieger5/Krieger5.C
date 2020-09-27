@@ -69,6 +69,23 @@ Foam::viscosityModels::Krieger5::calcNu() const
         viscosityModel(name, viscosityProperties, U, phi),
         Krieger5Coeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
 
+        
+#ifdef OPENFOAMESIORFOUNDATION
+        a_("a", dimless, Krieger5Coeffs_),
+        b_("b", dimless, Krieger5Coeffs_),
+        c_("c", dimless, Krieger5Coeffs_),
+
+        beta_("beta", dimless, Krieger5Coeffs_),
+        lambda_("lambda", dimTime, Krieger5Coeffs_),
+
+        nuK_("nuK", dimless, Krieger5Coeffs_),
+
+        muPlasma_("muPlasma", dimViscosity, Krieger5Coeffs_),
+        
+        Hcrit_("Hcrit", dimless, Krieger5Coeffs_),
+
+        rho_("rho", dimDensity, viscosityProperties),
+#else
         a_(Krieger5Coeffs_.lookup("a")),
         b_(Krieger5Coeffs_.lookup("b")),
         c_(Krieger5Coeffs_.lookup("c")),
@@ -81,10 +98,7 @@ Foam::viscosityModels::Krieger5::calcNu() const
         muPlasma_(Krieger5Coeffs_.lookup("muPlasma")),
 
         Hcrit_(Krieger5Coeffs_.lookup("Hcrit")),
-        
-#ifdef OPENFOAMESIORFOUNDATION
-        rho_("rho", dimDensity, viscosityProperties),
-#else
+
         rho_(viscosityProperties.lookup("rho")),
 #endif
 

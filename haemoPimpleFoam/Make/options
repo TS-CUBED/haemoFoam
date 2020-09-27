@@ -22,13 +22,15 @@ ifeq ($(WM_PROJECT), foam)
         VERSION_SPECIFIC_INC = -DFOAMEXTEND=40
     endif
 
+    VERSION_SPECIFIC_INC += -I$(LIB_SRC)/turbulenceModels/incompressible/turbulenceModel 
+
 else
 
     VERSION_SPECIFIC_LIBS = \
         -lturbulenceModels -lincompressibleTurbulenceModels -ltwoPhaseMixture \
         -limmiscibleIncompressibleTwoPhaseMixture -lmeshTools -lfvMotionSolvers \
         -lradiationModels -lfvOptions -lcompressibleTransportModels -lspecie \
-        -lfluidThermophysicalModels -lturbulenceModels -lcompressibleTurbulenceModels
+        -lfluidThermophysicalModels -lturbulenceModels -lcompressibleTurbulenceModels -lfvOptions
     
     VERSION_SPECIFIC_INC = \
         -DOPENFOAMESIORFOUNDATION \
@@ -67,11 +69,8 @@ EXE_INC = \
 EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     $(VERSION_SPECIFIC_LIBS) \
-    -lturbulenceModels \
-    -lincompressibleTurbulenceModels \
     -lincompressibleTransportModels \
     -lfiniteVolume \
-    -lfvOptions \
     -lsampling \
     -ldynamicFvMesh \
     -ltopoChangerFvMesh \
