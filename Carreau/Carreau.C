@@ -69,6 +69,16 @@ Foam::viscosityModels::Carreau::calcNu() const
         viscosityModel(name, viscosityProperties, U, phi),
         CarreauCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
 
+#ifdef OPENFOAMESIORFOUNDATION
+        n_("n", dimless, CarreauCoeffs_),
+
+        lambda_("lambda", dimTime, CarreauCoeffs_),
+
+        mu0_("mu0", dimViscosity*dimDensity, CarreauCoeffs_),
+        muInf_("muInf", dimViscosity*dimDensity, CarreauCoeffs_),
+        
+        rho_("rho", dimDensity, viscosityProperties),
+#else
         n_(CarreauCoeffs_.lookup("n")),
 
         lambda_(CarreauCoeffs_.lookup("lambda")),
@@ -76,7 +86,8 @@ Foam::viscosityModels::Carreau::calcNu() const
         mu0_(CarreauCoeffs_.lookup("mu0")),
         muInf_(CarreauCoeffs_.lookup("muInf")),
 
-        rho_(CarreauCoeffs_.lookup("rho")),
+        rho_(viscosityProperties.lookup("rho")),
+#endif
 
         nu_
         (

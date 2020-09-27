@@ -56,32 +56,69 @@ Author and Copyright
     All Rights Reserved
 
 \*---------------------------------------------------------------------------*/
-
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "turbulenceModel.H"
 #include "pimpleControl.H"
 
+#ifdef OPENFOAMESIORFOUNDATION
+    #include "dynamicFvMesh.H"
+    #include "turbulentTransportModel.H"
+    #include "CorrectPhi.H"
+    #include "fvOptions.H"
+    #include "localEulerDdtScheme.H"
+    #include "fvcSmooth.H"
+    // Windkessel includes:
+    #include "fixedFluxPressureFvPatchScalarField.H"
+    #include "scalarIOList.H"
+    #include "WKFunctions.C"   // Windkessel function file
+    #include "WKBCFvPatchScalarField.H"
+#else
+    #include "turbulenceModel.H"
+#endif
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-#   include "setRootCase.H"
-#   include "createTime.H"
-#   include "createMesh.H"
+
+#ifdef OPENFOAMESIORFOUNDATION
+    #include "postProcess.H"
+    
+    #include "setRootCaseLists.H"
+    #include "createTime.H"
+    #include "createDynamicFvMesh.H"
+    #include "initContinuityErrs.H"
+    #include "createDyMControls.H"
+    #include "createWindkessel.H"  //Windkessel header file (has to be placed in this order since p depends on scalar list storage)
+    #include "createFields.H"
+    #include "createUfIfPresent.H"
+    #include "CourantNo.H"
+    #include "setInitialDeltaT.H"
+#else
+    #include "setRootCase.H"
+    #include "createTime.H"
+    #include "createMesh.H"
 
     pimpleControl pimple(mesh);
 
-#   include "createFields.H"
-#   include "initContinuityErrs.H"
-#   include "createTimeControls.H"
+    #include "createFields.H"
+    #include "initContinuityErrs.H"
+    #include "createTimeControls.H"
+#endif
 
     // Read properties for haematocrit transp
+    #include "readHaemoProperties.H"
 
-#   include "readHaemoProperties.H"
+#ifdef OPENFOAMESIORFOUNDATION
+     if (!LTS)
+    {
+        #include "CourantNo.H"
+        #include "setInitialDeltaT.H"
+    }
 
+    turbulence->validate();
+#else
     turbulence->correct();
-
+#endif
 
     // Back to original code
 
@@ -89,10 +126,25 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-#       include "readTimeControls.H"
-#       include "CourantNo.H"
-#       include "setDeltaT.H"
+#ifdef OPENFOAMESIORFOUNDATION
+        #include "readDyMControls.H"
 
+        if (LTS)
+        {
+            #include "setRDeltaT.H"
+        }
+        else
+        {
+            #include "CourantNo.H"
+            #include "setDeltaT.H"
+        }
+#else
+        #include "readTimeControls.H"
+
+        #include "CourantNo.H"
+        #include "setDeltaT.H"
+#endif
+            
         runTime++;
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
@@ -100,14 +152,41 @@ int main(int argc, char *argv[])
         // --- PIMPLE loop
         while (pimple.loop())
         {
+#ifdef OPENFOAMESIORFOUNDATION
+            if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
+            {
+                mesh.update();
+
+                if (mesh.changing())
+                {
+                    MRF.update();
+
+                    if (correctPhi)
+                    {
+                        // Calculate absolute flux
+                        // from the mapped surface velocity
+                        phi = mesh.Sf() & Uf();
+
+                        #include "correctPhi.H"
+
+                        // Make the flux relative to the mesh motion
+                        fvc::makeRelative(phi, U);
+                    }
+
+                    if (checkMeshCourantNo)
+                    {
+                        #include "meshCourantNo.H"
+                    }
+                }
+            }
+#endif
+            
 #           include "UEqn.H"
 
             // --- PISO loop
             while (pimple.correct())
             {
 #               include "pEqn.H"
-
-
             }
 
             // Calculate H equation
@@ -120,7 +199,11 @@ int main(int argc, char *argv[])
                 Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
             } else
             {
+#ifdef OPENFOAMESIORFOUNDATION
+                if (!pimple.finalPisoIter())
+#else
                 if (!pimple.finalIter())
+#endif
                 {
                     HEqn.relax();                   // use these two lines
                     HEqn.solve().initialResidual(); // for underrelaxed solver
@@ -133,10 +216,22 @@ int main(int argc, char *argv[])
 
             // Back to original code
 
-           
-            turbulence->correct();
+            if (pimple.turbCorr())
+                {
+                    laminarTransport.correct();
+                    turbulence->correct();
+                }
+                
+//#ifdef OPENFOAMESIORFOUNDATION
+//            }
+//#endif
 
         }
+
+#ifdef OPENFOAMESIORFOUNDATION
+        /* Updating the Windkessel struct data structure*/
+        execute_at_end(mesh,phi,store);
+#endif
 
         runTime.write();
 
