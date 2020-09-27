@@ -2,8 +2,7 @@
 
 #source ~/foam/foam-extend-4.0/etc/bashrc
 
-#apps="haemoSimpleFoam haemoPisoFoam haemoPimpleFoam haemoPostProcess"
-apps="haemoPimpleFoam"
+apps="haemoPimpleFoam haemoPostProcess"
 libs="KriegerDougherty Krieger5 Quemada Carreau"
 
 for app in $apps; do
