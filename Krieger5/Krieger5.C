@@ -80,7 +80,7 @@ Foam::viscosityModels::Krieger5::calcNu() const
 
         nuK_("nuK", dimless, Krieger5Coeffs_),
 
-        muPlasma_("muPlasma", dimViscosity, Krieger5Coeffs_),
+        muPlasma_("muPlasma", dimViscosity*dimDensity, Krieger5Coeffs_),
         
         Hcrit_("Hcrit", dimless, Krieger5Coeffs_),
 

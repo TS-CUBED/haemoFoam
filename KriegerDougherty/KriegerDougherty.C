@@ -70,7 +70,7 @@ Foam::viscosityModels::KriegerDougherty::calcNu() const
 
 #ifdef OPENFOAMESIORFOUNDATION
         n_("n", dimless, KriegerDoughertyCoeffs_),
-        muPlasma_("muPlasma", dimViscosity, KriegerDoughertyCoeffs_),
+        muPlasma_("muPlasma", dimViscosity*dimDensity, KriegerDoughertyCoeffs_),
 
         Hcrit_("Hcrit", dimless, KriegerDoughertyCoeffs_),
         rho_("rho", dimDensity, viscosityProperties),

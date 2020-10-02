@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
             } else
             {
 #ifdef OPENFOAMESIORFOUNDATION
-                if (!pimple.finalPisoIter())
+                if (!pimple.finalPimpleIter())
 #else
                 if (!pimple.finalIter())
 #endif
