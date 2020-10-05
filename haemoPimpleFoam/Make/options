@@ -51,6 +51,7 @@ else
 endif
 
 EXE_INC = \
+    -I../WK2.0 \
     -I../haemoFoamCommonCode \
     $(DISABLE_WARNING_FLAGS) \
     $(VERSION_SPECIFIC_INC) \
