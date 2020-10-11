@@ -108,7 +108,7 @@ void WKBCFvPatchScalarField::updateCoeffs()
     /*Creating a patch field of same size as the boundary field*/
     const fvPatch& p = this->patch();
     scalarField report(p.size());
-    
+
 
     /* Accessing the variables stored in mesh */
     const fvMesh& mesh = patch().boundaryMesh().mesh();
@@ -116,6 +116,8 @@ void WKBCFvPatchScalarField::updateCoeffs()
 
     const scalar current_pressure = store[index_];
 
+	//Info << "store in WKBC " << store << nl << endl;
+	//Info << "current_pressure" << current_pressure << nl << endl;
 
     /*Applying the pressure to each face on the outlet*/
     forAll(report,it)
@@ -123,15 +125,14 @@ void WKBCFvPatchScalarField::updateCoeffs()
 		report[it] = current_pressure/1060;
 		
     }
- 
+
+	//Info << "BC P " << average(report)*1060 << nl << endl;
+
     /*Assigning the operator to the new patch field*/
-    scalarField::operator=
+    scalarField::operator= 
     (
      report
     );
-    
-
-
     
 }
 
@@ -140,12 +141,9 @@ void WKBCFvPatchScalarField::updateCoeffs()
 void WKBCFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
-    os.writeKeyword("index")
+    os.writeKeyword("index") 
         << index_ << token::END_STATEMENT << nl;
-//	writeEntry("value",os);
-
-//  Do I need to write out p values on the boundary? writeEntry no longer working in openfoam7
-
+    writeEntry(os, "value", *this);
 }
 
 

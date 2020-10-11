@@ -1,28 +1,25 @@
-
 double RHO_0;
 double dt;
 int N_OUTLETS;
-//char* patch_names[] = {"OUTLET_ACA","OUTLET_MCA"};
 DynamicList<string> patch_names(10); // 10 has been set as the maximum limit of outlets that are expected
 
 /* Windkessel Structure Definition */
-typedef struct {
-	double Q_current;    	/* Current  time stepproximal flow rate */
-	double Q_previous; 	  /* Previous time step proximal flow rate */
-	double Q_previous2;  	/* 2 Previous time step proximal flow rate */
-	double P_current;		  /* Current time stepproximal pressure */
-	double P_previous;		  /* Previous time step proximal pressure */
-	double P_previous2;	  /* 2 Previous time step proximal pressure */
-	double Pout_current;		/* Current back-pressure */
-	double Pout_previous;	/* Previous back-pressure */
-	double Pout_previous2;  /* 2 Previous back-pressure */
-	double Pc_current;		/* Current back-pressure */
-	double Pc_previous;	/* Previous back-pressure */
-	double Pc_previous2;  /* 2 Previous back-pressure */
+typedef struct
+{
+	double Q_3;
+	double Q_2;
+	double Q_1;
+	double Q_0;
+	double P_1;
+	double P_2;
+	double P_0;
+	double P1;
 	int id;			/* Windkessel element id */
 	double R;		/* Resistance */
 	double C;		/* Compliance */
 	double Z;		/* Impedance */
+	int order;
+
 } WindKessel;
 
 
@@ -31,261 +28,174 @@ WindKessel *wk;
 void initialise(const dictionary& windkesselProperties)
 {
 
+	/* Initialising Windkessel object */
 
- /* Initialising Windkessel object */
-
-	int i;
 	wk = (WindKessel*)malloc(N_OUTLETS*sizeof(WindKessel));
-	for (i=0;i<N_OUTLETS;i++)
-	{
-		/* retrieve from Scheme instantiation : First instantiation variables */
-		wk[i].Q_current 	= 0;
-		wk[i].Q_previous 	= 0;
-		wk[i].Q_previous2 	= 0;
-		wk[i].P_current 	= 0; /* Proximal pressure */
-		wk[i].P_previous 	= 0;
-		wk[i].P_previous2 	= 0;
-		wk[i].Pout_current 	= 0;  /* Venous pressure */
-		wk[i].Pout_previous = 0;
-		wk[i].Pout_previous2 = 0;
-		wk[i].Pc_current 	= 0;	/* Intramural pressure */
-		wk[i].Pc_previous 	= 0;
-		wk[i].Pc_previous2 	= 0;
-	}	
-
-
 
 	/* Retrieving values from windkessel dictionary*/
 
- const wordList outletNames(windkesselProperties.toc());
+	const wordList outletNames(windkesselProperties.toc());
 
- forAll(outletNames, item)
-   {
-     const word& outletName = outletNames[item];
-     Info << "Evaluating properties for " << outletName << endl;
+	forAll(outletNames, item)
+	{
+		const word& outletName = outletNames[item];
+		Info << "Evaluating properties for " << outletName << endl;
 
-     const dictionary& subDict = windkesselProperties.subDict(outletName);
+		const dictionary& subDict = windkesselProperties.subDict(outletName);
 
-     scalar C = readScalar(subDict.lookup("C"));
-     scalar R = readScalar(subDict.lookup("R"));
-     scalar Z = readScalar(subDict.lookup("Z"));
-     scalar real_index = readScalar(subDict.lookup("outIndex"));
+		scalar C = readScalar(subDict.lookup("C"));
+		scalar R = readScalar(subDict.lookup("R"));
+		scalar Z = readScalar(subDict.lookup("Z"));
+		scalar real_index = readScalar(subDict.lookup("outIndex"));
+		scalar Qpre1 = readScalar(subDict.lookup("Flowrate_oneStepBefore"));
+		scalar Qpre2 = readScalar(subDict.lookup("Flowrate_twoStepBefore"));
+		scalar Qpre3 = readScalar(subDict.lookup("Flowrate_threeStepBefore"));
+		scalar Ppre2 = readScalar(subDict.lookup("Pressure_twoStepBefore"));
+		scalar Ppre1 = readScalar(subDict.lookup("Pressure_oneStepBefore"));
+		scalar Pnow = readScalar(subDict.lookup("Pressure_start"));
+		scalar FDMorder = readScalar(subDict.lookup("FDM_order"));
 
-
-     int out_index = real_index;
-   
-     Info << "C, R, Z and index are " << C << ", " << R << ", " << Z << ", " << out_index << "." <<endl; 
-
-     wk[out_index].R 			= R;
-     wk[out_index].C 			= C;
-     wk[out_index].Z 			= Z;
-     wk[out_index].id 			= out_index;
-				
-   }
+		int out_index = real_index;
+		int order = FDMorder;
 
 
- /* End of file*/
+		Info << "C, R, Z and index are " << C << ", " << R << ", " << Z << ", " << out_index << "." <<endl;
+		/* e.g., last saved time: 80.00, running from 80.01 ---> 0: 80.01, -1: 80.00, -2: 79.99, -3: 79.98*/
+		wk[out_index].R = R;
+		wk[out_index].C = C;
+		wk[out_index].Z = Z;
+		wk[out_index].id = out_index;
+		wk[out_index].Q_3 = Qpre3;
+		wk[out_index].Q_2 = Qpre2;
+		wk[out_index].Q_1 = Qpre1;
+		wk[out_index].Q_0 = 0;		// updated from Windkessel
+		wk[out_index].P_1 = Ppre1;
+		wk[out_index].P_2 = Ppre2;
+		wk[out_index].P_0 = Pnow;
+		wk[out_index].P1 = 0;		// updated from Windkessel
+		wk[out_index].order = order;
+	}
 
 }
 
-
-double first_order_derivative(double x, double xp)
+double calculate_pressure_veryFirst(int i, fvMesh & mesh, volScalarField& p)
 {
-	double derivative;
+	double outPressure = 0.0;
+	// Pressure calculation for each outlet
 
-	derivative = (x - xp)/dt;
+	label outletPatch = mesh.boundaryMesh().findPatchID(patch_names[i]);
 
-	return derivative;
-}
+	double psize = p.boundaryField()[outletPatch].size();
+	Info << "psize " << psize << endl;
 
-double front_first_order_derivative()
-{
-	double derivative;
+	if (outletPatch >= 0)
+	{
+		outPressure = 1060.0 * average(p.boundaryField()[outletPatch]);
+	}
+	reduce(outPressure, sumOp<scalar>());
 
-	derivative = 1.0/dt;
+	Info << "Pressure for " << patch_names[i] << " :  " << outPressure << endl;
 
-	return derivative;
-}
-
-double back_first_order_derivative(double xp)
-{
-	double derivative;
-
-	derivative = -xp/dt;
-
-	return derivative;
-}
-
-double second_order_derivative(double x, double xp,double xp2)
-{
-	double derivative;
-
-	derivative = (1.5*x - 2.0*xp + 0.5*xp2)/dt;
-
-	return derivative;
-}
-
-double front_second_order_derivative()
-{
-	double derivative;
-
-	derivative = 1.5/dt;
-
-	return derivative;
-}
-
-double back_second_order_derivative(double xp, double xp2)
-{
-	double derivative;
-
-	derivative = (-2.0*xp + 0.5*xp2)/dt;
-
-	return derivative;
-}
-
-double derivative(double x, double xp, double xp2)
-{
-	double d;
-
-	// d = first_order_derivative(x,xp);
-
-	d = second_order_derivative(x,xp,xp2);
-
-	return d;
-}
-
-double front_derivative()
-{
-	double d;
-	//d = front_first_order_derivative();
-
-	d = front_second_order_derivative();
-
-	return d;
-}
-
-double back_derivative(double xp, double xp2)
-{
-		double d;
-		//d = back_first_order_derivative(xp);
-		d = back_second_order_derivative(xp,xp2);
-
-		return d;
-}
-
-double calculate_flow_rate_additional(int i, fvMesh & mesh, volVectorField & U)
-{
-	scalar flux = 0.0;
-
-	word outlet_name = patch_names[i];
-
-	//access boundary elements 
-	const fvPatchList& patches = mesh.boundary(); 
-
-	//loop over boundaries 
-	forAll(patches, patchI) 
-	{ 
-	    const fvPatch& cPatch = patches[patchI]; 
-
-	    //check boundary name 
-	    if(cPatch.name() == outlet_name) 
-	      { 
-
-		//Access boundary face area vectors 
-		const vectorField& inletAreaVectors = cPatch.Sf(); 
-
-		//loop over all faces of selected 
-		//boundary 
-		forAll(cPatch, faceI) 
-		{ 
-
-		    //calculate boundary face mass flux 
-                    scalar cFaceFlux = U.boundaryField()[patchI][faceI] & inletAreaVectors[faceI]; 
-
-                     //sum face mass fluxes 
-                     flux += cFaceFlux; 
-		} 
-
-	      } 
-
-	  } 
-
-	Info<< "FlowRate: " << flux << " m^3/s" << endl; 
-
-
-	return flux;
+	return outPressure;
 
 }
 
-double calculate_flow_rate(int i, fvMesh & mesh, surfaceScalarField & phi)
+
+double calculate_flowrate(int i, fvMesh & mesh, surfaceScalarField& phi)
 {
 	scalar outflow = 0.0;
 
 	label outletPatch = mesh.boundaryMesh().findPatchID(patch_names[i]);
-
-	if (outletPatch >=0)
+	if (outletPatch >= 0)
 	{
-	  outflow = sum(phi.boundaryField()[outletPatch]);
+		outflow = sum(phi.boundaryField()[outletPatch]);
 	}
 
 	reduce(outflow, sumOp<scalar>());
-
-	Info << "Flowrate for " << patch_names[i] << " :  " << outflow << endl; 
+	//Info << "Flowrate for " << patch_names[i] << " :  " << outflow << endl;
 
 	return outflow;
 
 }
 
-void Wk_pressure_update(int i, double rho, fvMesh & mesh, surfaceScalarField & phi, scalarIOList & store)
-{
-  
-	scalar p,dpc,dpq;
-
-	//wk[i].Q_current = calculate_flow_rate(i,mesh,U);
-	wk[i].Q_current = calculate_flow_rate(i,mesh,phi);
-	dpc = derivative(wk[i].Pc_current,wk[i].Pc_previous,wk[i].Pc_previous2);
-	dpq = derivative(wk[i].Q_current,wk[i].Q_previous,wk[i].Q_previous2);
-
-	p = wk[i].Q_current
-	- wk[i].C*back_derivative(wk[i].P_previous,wk[i].P_previous2)
-	+ wk[i].Z*(wk[i].C*dpq+wk[i].Q_current/wk[i].R)
-	+ wk[i].Pout_current/wk[i].R+wk[i].C*dpc;
-
-	scalar P_current = p/(1.0/wk[i].R+wk[i].C*front_derivative());
-
-	wk[i].P_current = P_current;
-    
-
-	/*Saving the pressure in a scalar array*/
-	store[i]=P_current;
-
-	Info<< "Pressure: " << P_current << " Pa" << endl; 
-
-}
-
-void execute_at_end(fvMesh & mesh, surfaceScalarField & phi, scalarIOList & store)
+void execute_at_end(fvMesh& mesh, surfaceScalarField& phi, scalarIOList& store, volScalarField& p, dictionary& windkesselProperties)
 {
 
-  int i;
+	int i;
 
-  for (i=0;i<N_OUTLETS;i++)
-    {
+	for (i=0;i<N_OUTLETS;i++)
+	{
+	wk[i].Q_0 = calculate_flowrate(i, mesh, phi);					//current Q
 
-      /* Save previous states */
-      wk[i].P_previous2 = wk[i].P_previous;
-      wk[i].Q_previous2 = wk[i].Q_previous;
-      wk[i].Pout_previous2 = wk[i].Pout_previous;
-      wk[i].Pc_previous2 = wk[i].Pc_previous;
+	// Windkessel third order
+	double Q_source = 0.0;
+	double Pgrad_part = 0.0;
+	double Pdenom = 0.0;
 
-      wk[i].P_previous = wk[i].P_current;
-      wk[i].Q_previous = wk[i].Q_current;
-      wk[i].Pout_previous = wk[i].Pout_current;
-      wk[i].Pc_previous = wk[i].Pc_current;
+	/* Identifying the order of finite difference method */
+	int flag = wk[i].order;
+	/* Discretisation depending on the selected order */
+	/* last saved: 80.00, running from 80.01 ---> 0: 80.01, -1: 80.00, -2: 79.99, -3: 79.98*/
+	switch (flag)
+	{
+		case 1:	//1st order
+			Q_source = (wk[i].Q_0 / wk[i].C)*(1 + wk[i].Z / wk[i].R) + (wk[i].Z / dt)*(wk[i].Q_0 - wk[i].Q_1);
+			Pgrad_part = - wk[i].P_0 / dt;
+			Pdenom = 1 / dt + 1 / (wk[i].R*wk[i].C);
+            break;
+		case 2:	//2nd order
+			Q_source = (wk[i].Q_0 / wk[i].C)*(1 + wk[i].Z / wk[i].R) + (wk[i].Z / dt)*( 3/2 * wk[i].Q_0 - 2 * wk[i].Q_1 + 1/2 * wk[i].Q_2 );
+			Pgrad_part = -2 * wk[i].P_0 / dt + wk[i].P_1 / (2 * dt);
+			Pdenom = 3 / (2*dt) + 1 / (wk[i].R*wk[i].C);
+            break;
+		case 3:	//3rd order
+			Q_source = (wk[i].Q_0 / wk[i].C)*(1 + wk[i].Z / wk[i].R) + (wk[i].Z / dt)*(11 / 6 * wk[i].Q_0 - 3 * wk[i].Q_1 + 3 / 2 * wk[i].Q_2 - 1 / 3 * wk[i].Q_3);
+			Pgrad_part = -3 * wk[i].P_0/dt + (3*wk[i].P_1)/(2*dt) - wk[i].P_2/(3*dt);
+			Pdenom = 11 / (6 * dt) + 1 / (wk[i].R*wk[i].C);
+            break;
+		default: //1st order
+			Q_source = (wk[i].Q_0 / wk[i].C)*(1 + wk[i].Z / wk[i].R) + (wk[i].Z / dt)*(wk[i].Q_0 - wk[i].Q_1);
+			Pgrad_part = -wk[i].P_0 / dt;
+			Pdenom = 1 / dt + 1 / (wk[i].R*wk[i].C);
+	}
+	// calculate pressure
+	wk[i].P1 = (Q_source - Pgrad_part) / Pdenom;
 
-      /*Update WindKessel values*/
+	// Saving the pressure in a scalar array
+	store[i] = wk[i].P1;
 
-      Wk_pressure_update(i, RHO_0, mesh, phi,store);
+	//WRITE OUT TO constant/windkesselProperties
+	dictionary& WK_dict = windkesselProperties.subDict(patch_names[i]);
+	Info << patch_names[i] << ": " << endl;
+	if (flag >= 3)
+	{
+		WK_dict.set("Flowrate_threeStepBefore", wk[i].Q_2);
+	}
+	if (flag >= 2)
+	{
+		WK_dict.set("Flowrate_twoStepBefore", wk[i].Q_1);
+	}
+	  Info << "Flowrate    " << wk[i].Q_0 << ";" << endl;
+		WK_dict.set("Flowrate_oneStepBefore", wk[i].Q_0);
 
+	if (flag >= 3)
+	{
+		WK_dict.set("Pressure_twoStepBefore", wk[i].P_1);
+	}
+	if (flag >= 2)
+	{
+		WK_dict.set("Pressure_oneStepBefore", wk[i].P_0);
+	}
+	  Info << "Pressure    " << wk[i].P1 << ";" << nl<< endl;
+		WK_dict.set("Pressure_start", wk[i].P1);
+
+	/* update */
+	wk[i].P_2 = wk[i].P_1;
+	wk[i].P_1 = wk[i].P_0;
+	wk[i].P_0 = wk[i].P1;
+	wk[i].Q_3 = wk[i].Q_2;
+	wk[i].Q_2 = wk[i].Q_1;
+	wk[i].Q_1 = wk[i].Q_0;
     }
 
 }

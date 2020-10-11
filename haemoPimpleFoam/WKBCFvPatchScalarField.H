@@ -31,8 +31,9 @@ Description
 SourceFiles
     WKBCFvPatchVectorField.C
 
-Author
+Authors
     Andris Piebalgs, Imperial College London, 2017  All rights reserved
+    Boram Gu, Emily Manchester, Imperial College London, 2020 All rights reserved
 
 \*---------------------------------------------------------------------------*/
 

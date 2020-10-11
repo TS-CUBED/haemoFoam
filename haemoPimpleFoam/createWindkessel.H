@@ -32,22 +32,25 @@ IOdictionary windkesselProperties
     IOobject
     (
         "windkesselProperties",
-        runTime.constant(),
+        runTime.timeName(),
         mesh,
         IOobject::MUST_READ_IF_MODIFIED,
-        IOobject::NO_WRITE
+        IOobject::AUTO_WRITE
     )
 );
- 
+
 
 /* Finding the number of outlets */
 
- const wordList outletNames(windkesselProperties.toc());
- int sizeOf = outletNames.size();
- N_OUTLETS = sizeOf;
- Info << "Number of outlets are :" << N_OUTLETS << endl;
+const wordList outletNames(windkesselProperties.toc());
+int sizeOf = outletNames.size();
+N_OUTLETS = sizeOf;
+Info << "Number of outlets are :" << N_OUTLETS << endl;
 
-/* Define timestep and density for use with Windkessel */ 
+/* Read flag */
+int WK_FLAG = N_OUTLETS;
+
+/* Define timestep and density for use with Windkessel */
 
 dt = runTime.deltaTValue();
 
@@ -81,8 +84,8 @@ RHO_0 = rho.value();
      const word& outletName = outletNames[item];
      const dictionary& subDict = windkesselProperties.subDict(outletName);
      int realIndex = readScalar(subDict.lookup("outIndex"));
-   
-     patch_names[realIndex] = outletName;				
+
+     patch_names[realIndex] = outletName;
    }
 
 for (int it_check = 0; it_check < N_OUTLETS; it_check++)
@@ -106,15 +109,14 @@ scalarIOList store
     N_OUTLETS
 );
 
+/* Initialise the WK properties*/
+initialise(windkesselProperties);
+
 
 /*Initialising the storage array*/
 
 for (int it = 0; it <N_OUTLETS; it++)
 {
-  store[it] = 0;
+	store[it] = wk[it].P_0;
+	//Info << "First Stored " << store[it] << endl;
 }
-
-/* Initialise the WK properties*/
-initialise(windkesselProperties);
-    
-
