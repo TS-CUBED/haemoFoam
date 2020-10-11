@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     #include "readHaemoProperties.H"
 
 #ifdef OPENFOAMESIORFOUNDATION
-     if (!LTS)
+    if (!LTS)
     {
         #include "CourantNo.H"
         #include "setInitialDeltaT.H"
