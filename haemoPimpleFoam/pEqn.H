@@ -27,7 +27,11 @@ phiHbyA +=
 HbyA -= (rAU - rAtU())*fvc::grad(p);
 }
 
+#ifndef OPENFOAMESI
 if (pimple.nCorrPiso() <= 1)
+#else
+if (pimple.nCorrPISO() <= 1)
+#endif
 {
 tUEqn.clear();
 }

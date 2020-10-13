@@ -92,7 +92,11 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "createUfIfPresent.H"
     #include "CourantNo.H"
-    #include "setInitialDeltaT.H"
+
+#   ifdef OPENFOAMFOUNDATION
+        #include "setInitialDeltaT.H"
+#   endif
+
 #else
     #include "setRootCase.H"
     #include "createTime.H"
@@ -108,7 +112,7 @@ int main(int argc, char *argv[])
     // Read properties for haematocrit transp
     #include "readHaemoProperties.H"
 
-#ifdef OPENFOAMESIORFOUNDATION
+#ifdef OPENFOAMFOUNDATION
     if (!LTS)
     {
         #include "CourantNo.H"
@@ -128,7 +132,11 @@ int main(int argc, char *argv[])
     {
 #ifdef OPENFOAMESIORFOUNDATION
         #include "readDyMControls.H"
+#else   
+        #include "readTimeControls.H"
+#endif
 
+#ifdef OPENFOAMFOUNDATION
         if (LTS)
         {
             #include "setRDeltaT.H"
@@ -139,8 +147,6 @@ int main(int argc, char *argv[])
             #include "setDeltaT.H"
         }
 #else
-        #include "readTimeControls.H"
-
         #include "CourantNo.H"
         #include "setDeltaT.H"
 #endif
@@ -152,8 +158,13 @@ int main(int argc, char *argv[])
         // --- PIMPLE loop
         while (pimple.loop())
         {
-#ifdef OPENFOAMESIORFOUNDATION
+#ifdef  OPENFOAMFOUNDATION
             if (pimple.firstPimpleIter() || moveMeshOuterCorrectors)
+#endif
+#ifdef  OPENFOAMESI
+            if (pimple.firstIter() || moveMeshOuterCorrectors)
+#endif
+#ifdef OPENFOAMESIORFOUNDATION
             {
                 mesh.update();
 
@@ -199,7 +210,7 @@ int main(int argc, char *argv[])
                 Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
             } else
             {
-#ifdef OPENFOAMESIORFOUNDATION
+#ifdef OPENFOAMFOUNDATION
                 if (!pimple.finalPimpleIter())
 #else
                 if (!pimple.finalIter())
