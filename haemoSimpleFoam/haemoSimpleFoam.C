@@ -64,21 +64,47 @@ Author and Copyright
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
+#ifdef OPENFOAMESIORFOUNDATION
+#include "turbulentTransportModel.H"
+#else
 #include "turbulenceModel.H"
+#endif
 #include "simpleControl.H"
+#ifdef OPENFOAMESIORFOUNDATION
+#include "fvOptions.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-#   include "setRootCase.H"
-#   include "createTime.H"
-#   include "createMesh.H"
+    argList::addNote
+    (
+        "Steady-state solver for incompressible, turbulent flows."
+    );
 
-    simpleControl simple(mesh);
+#ifdef OPENFOAMESIORFOUNDATION
+    #include "postProcess.H"
 
-#   include "createFields.H"
-#   include "initContinuityErrs.H"
+    #include "addCheckCaseOptions.H"
+    #include "setRootCaseLists.H"
+    #include "createTime.H"
+    #include "createMesh.H"
+    #include "createControl.H"
+    #include "createFields.H"
+    #include "initContinuityErrs.H"
+
+    turbulence->validate();
+#else
+   include "setRootCase.H"
+   include "createTime.H"
+   include "createMesh.H"
+
+   simpleControl simple(mesh);
+
+   include "createFields.H"
+   include "initContinuityErrs.H"
+#endif
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -87,7 +113,6 @@ int main(int argc, char *argv[])
 #   include "readHaemoProperties.H"
 
     turbulence->correct();
-
 
     // Back to original code
 
@@ -109,8 +134,6 @@ int main(int argc, char *argv[])
 
 #	    include "HEqn.H"
 
-        // Back to original code
-        
         if (haemoSwitch.value() == 0 || runTime < haemoSwitchTime)
         {
             Info<< "Not Solving for H, Migration Model is inactive 1" << nl << endl;
@@ -121,7 +144,8 @@ int main(int argc, char *argv[])
             // HEqn.solve(); // or this one for no underrelaxation (unstable)
         }
 
-        turbulence->correct();  // update viscosity
+        laminarTransport.correct();
+        turbulence->correct();
 
         runTime.write();
 
