@@ -143,7 +143,11 @@ void WKBCFvPatchScalarField::write(Ostream& os) const
     fvPatchScalarField::write(os);
     os.writeKeyword("index") 
         << index_ << token::END_STATEMENT << nl;
+#ifdef OPENFOAMESI
+    writeEntry("value", os);
+#else
     writeEntry(os, "value", *this);
+#endif
 }
 
 
