@@ -34,14 +34,24 @@
     label pRefCell = 0;
     scalar pRefValue = 0.0;
     setRefCell(p, simple.dict(), pRefCell, pRefValue);
+    
+#ifdef OPENFOAMESIORFOUNDATION
+    mesh.setFluxRequired(p.name());
+#else
     mesh.schemesDict().setFluxRequired(p.name());
-
+#endif
+    
     singlePhaseTransportModel laminarTransport(U, phi);
     //	  replaced by
     //	singlePhaseTransportModel fluid(U, phi);
 
 
-    autoPtr<incompressible::turbulenceModel> turbulence
-        (
-         incompressible::turbulenceModel::New(U, phi, laminarTransport)
-        );
+autoPtr<incompressible::turbulenceModel> turbulence
+    (
+     incompressible::turbulenceModel::New(U, phi, laminarTransport)
+    );
+
+#ifdef OPENFOAMESIORFOUNDATION
+    #include "createMRF.H"
+    #include "createFvOptions.H"
+#endif
