@@ -362,8 +362,6 @@ int main(int argc, char *argv[])
                 WSS.write();
                 WSSMag.write();
 
-                Info<< "\x1b[A \x1b[A \x1b[A \x1b[A \x1b[A \x1b[A" << endl;
-
                 nfield++;
         //     }
         //     else
@@ -472,8 +470,6 @@ int main(int argc, char *argv[])
                        );
             }
 
-            Info<< "\x1b[A" << endl;
-    
             nfield++;
         }
         // else
