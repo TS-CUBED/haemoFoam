@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
-        Info<< "Time = " << runTime.timeName() << endl;
+        Info<< "Time = " << runTime.timeName() << "    " << endl;
 
         IOobject Uheader
             (
@@ -436,7 +436,7 @@ int main(int argc, char *argv[])
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
-        Info<< "Time = " << runTime.timeName() << endl;
+        Info<< "Time = " << runTime.timeName() << "    " << endl;
     
         IOobject WSSheader
             (
@@ -472,7 +472,7 @@ int main(int argc, char *argv[])
                        );
             }
 
-            Info<< "\x1b[A \x1b[A" << endl;
+            Info<< "\x1b[A" << endl;
     
             nfield++;
         }
