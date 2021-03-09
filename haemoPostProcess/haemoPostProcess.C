@@ -417,12 +417,6 @@ int main(int argc, char *argv[])
         }
     }
     
-    TAWSS.write();
-    TAWSSMag.write();
-    TAHct.write();
-    OSI.write();
-    RRT.write();
-    normalVector.write();
     
     
     // Second run, calculate transWSS
@@ -490,10 +484,18 @@ int main(int argc, char *argv[])
         }
     }
     
+    forAll(timeDirs, timeI)
+    {
     transWSS.write();
+    TAWSS.write();
+    TAWSSMag.write();
+    TAHct.write();
+    OSI.write();
+    RRT.write();
+    normalVector.write();
+    }
 
     Info<< "End" << endl;
-
     return 0;
 }
 
