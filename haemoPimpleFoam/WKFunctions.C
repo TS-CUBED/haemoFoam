@@ -6,12 +6,14 @@ DynamicList<string> patch_names(10); // 10 has been set as the maximum limit of 
 /* Windkessel Structure Definition */
 typedef struct
 {
+    double Q_4;
     double Q_3;
     double Q_2;
     double Q_1;
     double Q_0;
-    double P_1;
+    double P_3;
     double P_2;
+    double P_1;
     double P_0;
     double P1;
     int id;             /* Windkessel element id */
@@ -19,6 +21,9 @@ typedef struct
     double C;       /* Compliance */
     double Z;       /* Impedance */
     int order;
+    double time;    // store time in windkessel struct to reset values
+                    // should the time step be run multiple times
+                    // e.g. for FSI simulations
 
 } WindKessel;
 
@@ -74,6 +79,7 @@ void initialise(const dictionary& windkesselProperties)
         wk[out_index].P_0 = Pnow;
         wk[out_index].P1 = 0;       // updated from Windkessel
         wk[out_index].order = order;
+        wk[out_index].time = 0.0; // can I store the time step?
     }
 
 }
@@ -118,13 +124,45 @@ double calculate_flowrate(int i, fvMesh & mesh, surfaceScalarField& phi)
 
 }
 
-void execute_at_end(fvMesh& mesh, surfaceScalarField& phi, scalarIOList& store, volScalarField& p, dictionary& windkesselProperties)
+void execute_at_end(fvMesh& mesh, surfaceScalarField& phi, scalarIOList& store, volScalarField& p, dictionary& windkesselProperties, double& time)
 {
 
+    bool repeatTS;
+
+    // check if time step is repeated:
+    if (wk[0].time == time)
+    {
+        Info << "time step not advanced, reverting WK properties" << endl;
+
+        repeatTS = true;
+    }
+    else
+    {
+        Info << "time step advanced" << endl;
+        repeatTS = false;
+    }
+    
     int i;
 
     for (i=0;i<N_OUTLETS;i++)
     {
+
+
+    // Revert back to the previous time step if the time step is repeated (e.g. in FSI calcs using preCICE)
+    if (repeatTS)
+    { 
+        Info << "Time: " << time << ", Stored time: " << wk[0].time << endl;
+        wk[i].P_0 = wk[i].P_1;
+        wk[i].P_2 = wk[i].P_1;
+        wk[i].Q_0 = wk[i].Q_1;
+        wk[i].Q_1 = wk[i].Q_2;
+        wk[i].Q_2 = wk[i].Q_3;
+        wk[i].Q_3 = wk[i].Q_4;
+
+        Info << patch_names[i] << ":" << endl;
+        Info << "P(n-1) = " << wk[i].P_0 << endl; 
+    }
+
     wk[i].Q_0 = calculate_flowrate(i, mesh, phi);                   //current Q
 
     // Windkessel third order
@@ -186,16 +224,23 @@ void execute_at_end(fvMesh& mesh, surfaceScalarField& phi, scalarIOList& store, 
     {
         WK_dict.set("Pressure_oneStepBefore", wk[i].P_0);
     }
-      Info << "Pressure    " << wk[i].P1 << ";" << nl<< endl;
         WK_dict.set("Pressure_start", wk[i].P1);
 
     /* update */
-    wk[i].P_2 = wk[i].P_1;
-    wk[i].P_1 = wk[i].P_0;
-    wk[i].P_0 = wk[i].P1;
-    wk[i].Q_3 = wk[i].Q_2;
-    wk[i].Q_2 = wk[i].Q_1;
-    wk[i].Q_1 = wk[i].Q_0;
+    // if (wk[i].time != time)
+    // { 
+    //    Info << "time step advanced, updating WK properties" << endl;
+        wk[i].P_2 = wk[i].P_1;
+        wk[i].P_1 = wk[i].P_0;
+        wk[i].P_0 = wk[i].P1;
+        wk[i].Q_3 = wk[i].Q_2;
+        wk[i].Q_2 = wk[i].Q_1;
+        wk[i].Q_1 = wk[i].Q_0;
+        wk[i].time = time;
+    // }
+    Info << "P(n)   = " << wk[i].P1 << endl;
+
+    
     }
 
 }
