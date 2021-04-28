@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
-        Info<< "Time = " << runTime.timeName() << endl;
+        Info<< "Time = " << runTime.timeName() << "    " << endl;
 
         IOobject Uheader
             (
@@ -362,8 +362,6 @@ int main(int argc, char *argv[])
                 WSS.write();
                 WSSMag.write();
 
-                Info<< "\x1b[A \x1b[A \x1b[A \x1b[A" << endl;
-
                 nfield++;
         //     }
         //     else
@@ -419,12 +417,6 @@ int main(int argc, char *argv[])
         }
     }
     
-    TAWSS.write();
-    TAWSSMag.write();
-    TAHct.write();
-    OSI.write();
-    RRT.write();
-    normalVector.write();
     
     
     // Second run, calculate transWSS
@@ -436,7 +428,7 @@ int main(int argc, char *argv[])
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
-        Info<< "Time = " << runTime.timeName() << endl;
+        Info<< "Time = " << runTime.timeName() << "    " << endl;
     
         IOobject WSSheader
             (
@@ -471,7 +463,7 @@ int main(int argc, char *argv[])
                             )
                        );
             }
-    
+
             nfield++;
         }
         // else
@@ -492,10 +484,18 @@ int main(int argc, char *argv[])
         }
     }
     
+    forAll(timeDirs, timeI)
+    {
     transWSS.write();
+    TAWSS.write();
+    TAWSSMag.write();
+    TAHct.write();
+    OSI.write();
+    RRT.write();
+    normalVector.write();
+    }
 
     Info<< "End" << endl;
-
     return 0;
 }
 
