@@ -388,13 +388,14 @@ int main(int argc, char *argv[])
     if(nfield>0){
         Info<< "number of fields added: "<< nfield << endl;
     
+        TAHct /= nfield;
+
         forAll(TAWSS.boundaryField(), patchi)
         {
             TAWSS.boundaryFieldRef()[patchi] /= nfield;
     
             TAWSSMag.boundaryFieldRef()[patchi] /= nfield;
             
-            TAHct /= nfield ;
     
             OSI.boundaryFieldRef()[patchi] =
                 0.5
