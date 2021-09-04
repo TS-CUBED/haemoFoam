@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile {
+  version 4.0;
+  format ascii;
+  class dictionary;
+  object windkesselProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ICA {
+  C 10e-10;
+  R 15e+08;   // commonly R_2 or R_distal
+  Z 6e+07;    // commonly R_1 or R_proximal
+  outIndex 0; // must equal 'index' value in 0/p
+  FDM_order 1;
+
+  // NOTE: ALL WK PARAMETERS ARE IN SI UNITS! Not in physiological units.
+
+  // backward difference order: up to 3rd order
+
+  // Initialise WK parameters
+  // also useful to set initial condidions to speed up pressure development
+  Flowrate_threeStepBefore 0;
+  Flowrate_twoStepBefore 0;
+  Flowrate_oneStepBefore 0;
+  Pressure_twoStepBefore 9000;
+  Pressure_oneStepBefore 9000;
+  Pressure_start 9000;
+}
+
+ECA {
+  C 10e-10;
+  R 15e+08;
+  Z 6e+07;
+  outIndex 1;
+  FDM_order 1;
+  Flowrate_threeStepBefore 0;
+  Flowrate_twoStepBefore 0;
+  Flowrate_oneStepBefore 0;
+  Pressure_twoStepBefore 9000;
+  Pressure_oneStepBefore 9000;
+  Pressure_start 9000;
+}
+
+// ************************************************************************* //

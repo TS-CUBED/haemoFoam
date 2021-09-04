@@ -1,0 +1,75 @@
+/*----------------------------------*- C++ -*----------------------------------
+  =========                 |
+  \\      /  F ield         | foam-extend: Open Source CFD
+  \\    /   O peration     | Version:     4.0
+  \\  /    A nd           | Web:         http://www.foam-extend.org
+  \\/     M anipulation  | For copyright notice see file Copyright
+  -------------------------------------------------------------------------------*/
+FoamFile
+{
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      transportProperties;
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+//                 [ kg m s K mol A cd ]
+
+transportModel  Quemada;
+// transportModel  Newtonian;
+
+nu            [ 0 2 -1 0 0 0 0 ]      3.5e-6;
+rho           [ 1 -3 0 0 0 0 0 ]      1060;
+
+CarreauCoeffs
+{
+  mu0         [ 1 -1 -1 0 0 0 0 ]     0.07404;
+  muInf       [ 1 -1 -1 0 0 0 0 ]     0.003930;
+  n           [ 0 0 0 0 0 0 0 ]       0.4586;
+  lambda      [ 0 0 1 0 0 0 0 ]       9.1034;
+}
+
+QuemadaCoeffs
+{
+  a0          [ 0 0 0 0 0 0 0 ]       0.0611;
+  a1          [ 0 0 0 0 0 0 0 ]       0.04778;
+
+  b0          [ 0 0 0 0 0 0 0 ]       1.803;
+  b1          [ 0 0 0 0 0 0 0 ]       -3.683;
+  b2          [ 0 0 0 0 0 0 0 ]       2.614;
+  b3          [ 0 0 0 0 0 0 0 ]       -0.005193;
+
+  c0          [ 0 0 0 0 0 0 0 ]       -7.022;
+  c1          [ 0 0 0 0 0 0 0 ]       34.46;
+  c2          [ 0 0 0 0 0 0 0 ]       -39.96;
+  c3          [ 0 0 0 0 0 0 0 ]       14.1;
+
+  gammaC0     [ 0 0 -1 0 0 0 0 ]      1.0;
+  //needed for dimension only leave at 1.0!
+
+  muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;
+}
+
+KriegerDoughertyCoeffs
+{
+  n           [ 0 0 0 0 0 0 0 ]       1.82;
+  Hcrit       [ 0 0 0 0 0 0 0 ]       0.67;
+  muPlasma    [ 1 -1 -1 0 0 0 0 ]     1.23e-3;    
+}
+
+Krieger5Coeffs
+{
+  a           [ 0 0 0 0 0 0 0 ]        0; // zero in MKM5
+  b           [ 0 0 0 0 0 0 0 ]        8.781;
+  c           [ 0 0 0 0 0 0 0 ]        2.824;
+  beta        [ 0 0 0 0 0 0 0 ]        16.1;    
+  lambda_     [ 0 0 1 0 0 0 0 ]        1206;
+  nuK         [ 0 0 0 0 0 0 0 ]        0.1427;
+  muPlasma    [ 1 -1 -1 0 0 0 0 ]        1.23e-3;
+  Hcrit       [ 0 0 0 0 0 0 0 ]        0.98;
+}
+
+// ************************************************************************* //

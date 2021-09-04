@@ -1,0 +1,177 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  | =========                 |                                                 |
+  | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+  |  \\    /   O peration     | Version:  3.0.1                                 |
+  |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+  |    \\/     M anipulation  |                                                 |
+  \*---------------------------------------------------------------------------*/
+FoamFile
+{
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "system";
+  object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    Phi
+    {
+        solver          GAMG;
+        smoother        DIC;
+
+        tolerance       1e-06;
+        relTol          0.01;
+    }
+    p
+    {
+        solver          GAMG;
+        tolerance       1e-06;
+        relTol          0.01;
+        smoother        GaussSeidel;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+
+    pFinal
+    {
+        solver          GAMG;
+        tolerance       1e-07;
+        relTol          0;
+        smoother        GaussSeidel;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+
+    "(U|H|k|epsilon)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-08;
+        relTol          0.1;
+    }
+
+    "(U|H|k|epsilon)Final"
+    {
+        $U;
+        tolerance       1e-08;
+        relTol          0;
+    }
+
+    "(C_tPA|C_PLG|C_PLS|flowRate)"
+    {
+        solver            PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-6;
+        relTol           0;
+    };
+
+    "(n_tPA|n_PLG|n_PLS)"
+    {
+        solver            PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-6;
+        relTol           0;
+    };
+
+    "(n_tot|L_PLS)"
+    {
+        solver            PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-6;
+        relTol           0;
+    };
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors 5;
+    residualControl
+    {
+        p               1e-6;
+        U               1e-7;
+        H               1e-7;
+    }
+    pRefCell        0;
+    pRefValue       0;
+}
+
+PISO
+{
+    nCorrectors     5;
+    nNonOrthogonalCorrectors 2;
+}
+
+PIMPLE
+{
+    // For PIMPLE use the following two lines
+    nOuterCorrectors 200;
+    nCorrectors     2;
+    // For PISO mode use the following two lines (nOuterCorrectors set to 1)
+    // nOuterCorrectors 1;
+    // nCorrectors      5;
+    nNonOrthogonalCorrectors 2;
+    pRefCell        0;
+    pRefValue       0;
+
+    //    residualControl
+    //    {
+    //        U   1e-6;
+    //        p   1e-6;
+    //        H   1e-6;
+    //    }
+    //    outerCorrectorResidualControl
+
+    residualControl
+    {
+        U
+        {
+            tolerance 1e-6;
+            relTol 0;
+        }
+        p
+        {
+            tolerance 1e-6;
+            relTol 0;
+        }
+        H
+        {
+            tolerance 5e-6;
+            relTol 0;
+        }
+    }
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 3;
+}
+
+
+relaxationFactors
+{
+    fields
+    {
+        p           0.3;
+        pFinal      1;
+    }
+
+
+    equations
+    {
+        U           0.6;
+        UFinal      1;
+        H           0.1;
+        HFinal      1;
+    }
+}
+
+
+
+// ************************************************************************* //
