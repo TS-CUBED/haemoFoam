@@ -1,0 +1,96 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    ICA
+    {
+        type            zeroGradient;
+    }
+    ECA
+    {
+        type            zeroGradient;
+    }
+    WALL
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    APEX
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    SINUS
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    CCA
+    {
+        type            groovyBC;
+        value           uniform ( 0 0 0 );
+        variables (
+
+                //  Set x and y values for parabola
+                "minX=min(pts().x);"
+                "maxX=max(pts().x);"
+                "minY=min(pts().y);"
+                "maxY=max(pts().y);"
+
+                //  Assume a roughly circular cross section
+                "middleX=0.5*(minX+maxX);"
+                "middleY=0.5*(minY+maxY);"
+
+                //  The velocity profile is a parabola:
+                "xcor=pos().x-middleX;"
+                "ycor=pos().y-middleY;"
+                "radius=pow(pow(xcor,2)+pow(ycor,2),0.5);"
+                "RadMax=max(radius);"
+                "parabola=2.0*(1-pow((radius)/(RadMax),2));"
+
+                //  Set velocity to zero if outside of parabola
+                "profile=parabola>0.0 ? parabola : 0.0;"
+
+                //Average speed following Pedrizzetti1996
+
+                //Parameters
+                "C0=0.4355;"
+                "C2=0.05;"
+                "C4=-0.13;"
+                "C6=-0.1;"
+                "C8=-0.01;"
+
+                "S2=0.25;"
+                "S4=0.13;"
+                "S6=-0.02;"
+                "S8=-0.03;"
+
+                "PI=3.14159265;"
+
+                "speed=C0+C2*cos(2*PI*time())+S2*sin(2*PI*time())+C4*cos(4*PI*time())+S4*sin(4*PI*time())+C6*cos(6*PI*time())+S6*sin(6*PI*time())+C8*cos(8*PI*time())+S8*sin(8*PI*time());"
+        );
+
+            valueExpression "-1.0*normal()*speed*profile";
+    }
+}
+
+// ************************************************************************* //

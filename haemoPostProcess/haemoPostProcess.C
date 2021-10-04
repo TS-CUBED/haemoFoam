@@ -243,30 +243,14 @@ int main(int argc, char *argv[])
         runTime.setTime(timeDirs[timeI], timeI);
         Info<< "Time = " << runTime.timeName() << "    " << endl;
 
-        IOobject Uheader
+        IOobject wallShearStressheader
             (
-             "U",
+             "wallShearStress",
              runTime.timeName(),
              mesh,
              IOobject::MUST_READ
             );
         
-        IOobject U_0header
-            (
-             "U_0",
-             runTime.timeName(),
-             mesh,
-             IOobject::MUST_READ
-            );
-        
-        IOobject nuheader
-            (
-             "nu",
-             runTime.timeName(),
-             mesh,
-             IOobject::MUST_READ
-            );
-            
         IOobject Hheader
            (
             "H",
@@ -276,19 +260,14 @@ int main(int argc, char *argv[])
            );
 
 
-        // // Check U exists
-        // if (Uheader.headerOk())
-        // {
-        //     if (nuheader.headerOk())
-        //     {
+        // Check  wallShearStress exists
+            // if (Hheader.headerOk())
+            // {
                 mesh.readUpdate();
 
-                Info<< "    Reading U" << endl;
-                volVectorField U(Uheader, mesh);
+                Info<< "    Reading wallShearStress" << endl;
+                volVectorField wallShearStress(wallShearStressheader, mesh);
 
-                Info<< "    Reading nu" << endl;
-                volScalarField nu(nuheader, mesh);
-                
                 Info<< "    Reading H" << endl;
                 volScalarField H(Hheader, mesh);
 
@@ -336,25 +315,21 @@ int main(int argc, char *argv[])
                 {
 
                     WSS.boundaryFieldRef()[patchi] =
-                         -U.boundaryField()[patchi].snGrad()
-                         * nu.boundaryField()[patchi]
+                         wallShearStress.boundaryField()[patchi]
                          * rho.value();
 
                     WSSMag.boundaryFieldRef()[patchi] =
-                        mag(-U.boundaryField()[patchi].snGrad()
-                        * nu.boundaryField()[patchi])
+                        mag(-wallShearStress.boundaryField()[patchi])
                         * rho.value() ;
                         
                     TAWSS.boundaryFieldRef()[patchi] +=
-                         -U.boundaryField()[patchi].snGrad()
-                        * nu.boundaryField()[patchi]
-                        * rho.value() ;
+                         wallShearStress.boundaryField()[patchi]
+                         * rho.value();
 
                     TAWSSMag.boundaryFieldRef()[patchi] +=
-                        mag(-U.boundaryField()[patchi].snGrad()
-                        * nu.boundaryField()[patchi])
+                        mag(-wallShearStress.boundaryField()[patchi])
                         * rho.value() ;
-                        
+
                     TAHct.boundaryFieldRef()[patchi] +=
                         H.boundaryField()[patchi] ;
                 }
@@ -363,16 +338,13 @@ int main(int argc, char *argv[])
                 WSSMag.write();
 
                 nfield++;
-        //     }
-        //     else
-        //     {
-        //         Info<< "    No nu" << endl;
-        //     }
-        // }
-        // else
-        // {
-        //     Info<< "    No U" << endl;
-        // }
+            }
+            // else
+            // {
+            //     Info<< "    No wallShearStress, run the command" << endl;
+            //     Info<< "    haemoPimpleFoam -postProcess -func wallShearStress" << endl;
+            //     Info<< "    before running haemoPostProcess" << endl;
+            // }
 
         // Check U_0 exists for TWSSG
         // if (U_0header.headerOk())
@@ -380,7 +352,7 @@ int main(int argc, char *argv[])
         //     if (nuheader.headerOk())
         //     {
                 mesh.readUpdate();
-    }
+    // }
     
     Info<< "Writing TAWSS, TAWSSMag, OSI, RRT, normalVectors" << endl;
     
@@ -446,7 +418,6 @@ int main(int argc, char *argv[])
     
             Info<< "    Reading WSS" << endl;
             volVectorField WSS(WSSheader, mesh);
-    
     
             forAll(transWSS.boundaryField(), patchi)
             {

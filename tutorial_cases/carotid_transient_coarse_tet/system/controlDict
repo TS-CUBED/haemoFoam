@@ -1,0 +1,126 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1806                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs
+(
+    "libQuemada.so"
+    "libgroovyBC.so"
+);
+
+
+application     haemoPimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         6;
+
+deltaT          1e-3;
+
+writeControl    runTime;
+
+writeInterval   1e-2;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    //#include "surfaces"
+    CCA
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            CCA;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                p
+                U
+                H
+            );
+    }
+    ICA
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            ICA;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                p
+                U
+                H
+            );
+    }
+    ECA
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            ECA;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                p
+                U
+                H
+            );
+    }
+    //    residuals
+    //    {
+    //        type            residuals;
+    //        libs            ("libutilityFunctionObjects.so");
+    //        fields          (U p);
+    //        writeResidualFields yes;
+    //    }
+}
+// ************************************************************************* //
