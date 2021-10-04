@@ -20,7 +20,7 @@ simulationType laminar;
 RAS
 {
   RASModel        laminar;
-  turbulence      off;
+  turbulence      on;
   printCoeffs     on;
 }
 
