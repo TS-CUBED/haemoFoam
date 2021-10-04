@@ -419,7 +419,6 @@ int main(int argc, char *argv[])
             Info<< "    Reading WSS" << endl;
             volVectorField WSS(WSSheader, mesh);
     
-    
             forAll(transWSS.boundaryField(), patchi)
             {
                 transWSS.boundaryFieldRef()[patchi] +=
