@@ -172,6 +172,27 @@ int main(int argc, char *argv[])
          )
         );
 
+
+    volScalarField divTAWSS
+        (
+        IOobject
+        (
+        "divTAWSS",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar
+        (
+        "divTAWSS",
+        dimMass/(dimLength * dimLength * sqr(dimTime)),
+        //sqr(dimLength)/sqr(dimTime),
+        0
+        )
+        );
+
     volScalarField OSI
         (
          IOobject
@@ -243,6 +264,14 @@ int main(int argc, char *argv[])
         runTime.setTime(timeDirs[timeI], timeI);
         Info<< "Time = " << runTime.timeName() << "    " << endl;
 
+        IOobject Uheader
+            (
+             "U",
+             runTime.timeName(),
+             mesh,
+             IOobject::MUST_READ
+            );
+
         IOobject wallShearStressheader
             (
              "wallShearStress",
@@ -311,31 +340,100 @@ int main(int argc, char *argv[])
                      )
                     );
 
-                forAll(WSS.boundaryField(), patchi)
-                {
+                volScalarField divU
+                    (
+                    IOobject
+                    (
+                    "divU",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar
+                    (
+                    "divU",
+                    dimLength/(dimLength * dimLength),
+                    0
+                    )
+                    );
 
-                    WSS.boundaryFieldRef()[patchi] =
-                         wallShearStress.boundaryField()[patchi]
-                         * rho.value();
+                volScalarField divWSS
+                    (
+                    IOobject
+                    (
+                    "divWSS",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar
+                    (
+                    "divWSS",
+                    dimMass/(dimLength * dimLength * sqr(dimTime)),
+                    //sqr(dimLength)/sqr(dimTime),
+                    0
+                    )
+                    );
 
-                    WSSMag.boundaryFieldRef()[patchi] =
-                        mag(-wallShearStress.boundaryField()[patchi])
-                        * rho.value() ;
-                        
-                    TAWSS.boundaryFieldRef()[patchi] +=
-                         wallShearStress.boundaryField()[patchi]
-                         * rho.value();
+                    WSS =
+                         wallShearStress
+                         * rho;
 
-                    TAWSSMag.boundaryFieldRef()[patchi] +=
-                        mag(-wallShearStress.boundaryField()[patchi])
-                        * rho.value() ;
+                    WSSMag =
+                        mag(wallShearStress)
+                        * rho;
 
-                    TAHct.boundaryFieldRef()[patchi] +=
-                        H.boundaryField()[patchi] ;
-                }
+                    divWSS =
+                        fvc::div(wallShearStress)
+                         * rho;
+
+                    divTAWSS += divWSS;
+
+                    TAWSS +=
+                         wallShearStress
+                         * rho;
+
+                    TAWSSMag +=
+                        mag(-wallShearStress)
+                        * rho;
+
+                    TAHct +=
+                        H ;
+                // forAll(WSS.boundaryField(), patchi)
+                // {
+
+                //     WSS.boundaryFieldRef()[patchi] =
+                //          wallShearStress.boundaryField()[patchi]
+                //          * rho.value();
+
+                //     WSSMag.boundaryFieldRef()[patchi] =
+                //         mag(wallShearStress.boundaryField()[patchi])
+                //         * rho.value();
+
+                //     // divWSS.boundaryFieldRef()[patchi] =
+                //     //     fvc::div(wallShearStress);
+                //          // * rho.value();
+
+
+                //     TAWSS.boundaryFieldRef()[patchi] +=
+                //          wallShearStress.boundaryField()[patchi]
+                //          * rho.value();
+
+                //     TAWSSMag.boundaryFieldRef()[patchi] +=
+                //         mag(-wallShearStress.boundaryField()[patchi])
+                //         * rho.value() ;
+
+                //     TAHct.boundaryFieldRef()[patchi] +=
+                //         H.boundaryField()[patchi] ;
+                // }
                 
                 WSS.write();
                 WSSMag.write();
+                divWSS.write();
 
                 nfield++;
             }
@@ -354,7 +452,7 @@ int main(int argc, char *argv[])
                 mesh.readUpdate();
     // }
     
-    Info<< "Writing TAWSS, TAWSSMag, OSI, RRT, normalVectors" << endl;
+    Info<< "Writing TAWSS, TAWSSMag, divWSS, OSI, RRT, normalVectors" << endl;
     
     // devide by the number of added fields
     if(nfield>0){
@@ -362,19 +460,41 @@ int main(int argc, char *argv[])
     
         TAHct /= nfield;
 
+        TAWSS /= nfield;
+
+        TAWSSMag /= nfield;
+
+        divTAWSS = fvc::div(TAWSS);
+
+        // OSI =
+        //     0.5
+        //     * ( 1 - mag(TAWSS)
+        //     /(TAWSSMag+1e-64)
+        //     );
+        // Info<< "OSI" << endl;
+
+        // RRT =
+        //     1
+        //     /((
+        //         (1 - 2.0*OSI)
+        //         *
+        //         TAWSSMag
+        //     )+1e-64);
+        // Info<< "RRT" << endl;
+
         forAll(TAWSS.boundaryField(), patchi)
         {
             TAWSS.boundaryFieldRef()[patchi] /= nfield;
-    
+
             TAWSSMag.boundaryFieldRef()[patchi] /= nfield;
-            
-    
+
+
             OSI.boundaryFieldRef()[patchi] =
                 0.5
                 * ( 1 - mag(TAWSS.boundaryField()[patchi])
                         /(TAWSSMag.boundaryField()[patchi]+1e-64)
                   );
-    
+
             RRT.boundaryFieldRef()[patchi] =
                 1
                 /((
@@ -382,7 +502,7 @@ int main(int argc, char *argv[])
                             *
                             TAWSSMag.boundaryField()[patchi]
                   )+1e-64);
-    
+
             normalVector.boundaryFieldRef()[patchi] =
                 mesh.Sf().boundaryField()[patchi]
                 /mesh.magSf().boundaryField()[patchi]
@@ -455,12 +575,16 @@ int main(int argc, char *argv[])
             transWSS.boundaryFieldRef()[patchi] /= nfield;
         }
     }
-    
+
+    Info << "writing WSS metrics to all processed time directories" << endl;
     forAll(timeDirs, timeI)
     {
+    runTime.setTime(timeDirs[timeI], timeI);
+    mesh.readUpdate();
     transWSS.write();
     TAWSS.write();
     TAWSSMag.write();
+    divTAWSS.write();
     TAHct.write();
     OSI.write();
     RRT.write();
@@ -470,6 +594,7 @@ int main(int argc, char *argv[])
     Info<< "End" << endl;
     return 0;
 }
+
 
 
 // ************************************************************************* //
