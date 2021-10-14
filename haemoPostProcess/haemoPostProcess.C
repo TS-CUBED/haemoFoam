@@ -187,7 +187,8 @@ int main(int argc, char *argv[])
         dimensionedScalar
         (
         "divTAWSS",
-        dimMass/(dimLength * dimLength * sqr(dimTime)),
+        dimless/dimLength,
+        // dimMass/(dimLength * dimLength * sqr(dimTime)),
         //sqr(dimLength)/sqr(dimTime),
         0
         )
@@ -373,7 +374,8 @@ int main(int argc, char *argv[])
                     dimensionedScalar
                     (
                     "divWSS",
-                    dimMass/(dimLength * dimLength * sqr(dimTime)),
+                    dimless/dimLength,
+                    // dimMass/(dimLength * dimLength * sqr(dimTime)),
                     //sqr(dimLength)/sqr(dimTime),
                     0
                     )
@@ -387,9 +389,10 @@ int main(int argc, char *argv[])
                         mag(wallShearStress)
                         * rho;
 
+                    dimensionedScalar epsWSS = dimensionedScalar("epsWSS",WSS.dimensions(), 1e-64);
+
                     divWSS =
-                        fvc::div(wallShearStress)
-                         * rho;
+                         fvc::div(WSS/(mag(WSS)+epsWSS));
 
                     divTAWSS += divWSS;
 
@@ -464,44 +467,46 @@ int main(int argc, char *argv[])
 
         TAWSSMag /= nfield;
 
-        divTAWSS = fvc::div(TAWSS);
+        dimensionedScalar epsWSS = dimensionedScalar("epsWSS",TAWSS.dimensions(), 1e-64);
 
-        // OSI =
-        //     0.5
-        //     * ( 1 - mag(TAWSS)
-        //     /(TAWSSMag+1e-64)
-        //     );
-        // Info<< "OSI" << endl;
+        divTAWSS = fvc::div(TAWSS/(mag(TAWSS)+epsWSS));
 
-        // RRT =
-        //     1
-        //     /((
-        //         (1 - 2.0*OSI)
-        //         *
-        //         TAWSSMag
-        //     )+1e-64);
-        // Info<< "RRT" << endl;
+        OSI =
+            0.5
+            * ( 1 - mag(TAWSS)
+            /(TAWSSMag+epsWSS)
+            );
+        Info<< "OSI" << endl;
+
+        RRT =
+            1
+            /((
+                (1 - 2.0*OSI)
+                *
+                TAWSSMag
+            )+epsWSS);
+        Info<< "RRT" << endl;
 
         forAll(TAWSS.boundaryField(), patchi)
         {
-            TAWSS.boundaryFieldRef()[patchi] /= nfield;
+            // TAWSS.boundaryFieldRef()[patchi] /= nfield;
 
-            TAWSSMag.boundaryFieldRef()[patchi] /= nfield;
+            // TAWSSMag.boundaryFieldRef()[patchi] /= nfield;
 
 
-            OSI.boundaryFieldRef()[patchi] =
-                0.5
-                * ( 1 - mag(TAWSS.boundaryField()[patchi])
-                        /(TAWSSMag.boundaryField()[patchi]+1e-64)
-                  );
+            // OSI.boundaryFieldRef()[patchi] =
+            //     0.5
+            //     * ( 1 - mag(TAWSS.boundaryField()[patchi])
+            //             /(TAWSSMag.boundaryField()[patchi]+1e-64)
+            //       );
 
-            RRT.boundaryFieldRef()[patchi] =
-                1
-                /((
-                            (1 - 2.0*OSI.boundaryField()[patchi])
-                            *
-                            TAWSSMag.boundaryField()[patchi]
-                  )+1e-64);
+            // RRT.boundaryFieldRef()[patchi] =
+            //     1
+            //     /((
+            //                 (1 - 2.0*OSI.boundaryField()[patchi])
+            //                 *
+            //                 TAWSSMag.boundaryField()[patchi]
+            //       )+1e-64);
 
             normalVector.boundaryFieldRef()[patchi] =
                 mesh.Sf().boundaryField()[patchi]
