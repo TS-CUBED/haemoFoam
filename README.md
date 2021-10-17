@@ -11,3 +11,7 @@ Schenkel, T.; Halliday, I. Continuum Scale Non Newtonian Particle Transport Mode
 This is the preprint of the 2021 Mathematics paper:
 
 Schenkel, T. and Halliday, I., 2020. Continuum Scale Non Newtonian Particle Transport Model for Haemorheology--Implementation and Validation. arXiv preprint arXiv:2004.12380. https://arxiv.org/abs/2004.12380
+
+## Documentation
+
+Documentation is not complete yet. For the time being there are a few videos I recorded for my students: https://www.youtube.com/playlist?list=PLWHQIdms-YHSVrFf5qchNdjX-lFuDj4kK
