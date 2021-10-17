@@ -1,11 +1,13 @@
-/*---------------------------------------------------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
-     \\/     M anipulation  |
--------------------------------------------------------------------------------
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
 
+
+/*---------------------------------------------------------------------------*\
 Application
     Any custom solver with Windkessel boundary conditions
 
@@ -21,7 +23,6 @@ Description
 Dependencies
     WKFunctions.C
     windkesselProperties dictionary (when running)
-
 \*---------------------------------------------------------------------------*/
 
 
@@ -49,6 +50,8 @@ Info << "Number of outlets are :" << N_OUTLETS << endl;
 
 /* Read flag */
 int WK_FLAG = N_OUTLETS;
+
+
 
 /* Define timestep and density for use with Windkessel */
 
