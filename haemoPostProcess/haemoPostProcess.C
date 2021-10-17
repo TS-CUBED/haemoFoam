@@ -1,25 +1,13 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+
 /*---------------------------------------------------------------------------*\
-  =========                 |
-  \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.0
-    \\  /    A nd           | Web:         http://www.foam-extend.org
-     \\/     M anipulation  | For copyright notice see file Copyright
--------------------------------------------------------------------------------
-License
-
-    This is free software: you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation, either version 3 of the License, or (at your
-    option) any later version.
-
-    This code is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
-
 Application
     haemoPostProcess
 
@@ -50,7 +38,6 @@ Author and Copyright
     Sheffield Hallam University
     February 2019
     All Rights Reserved
-
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
@@ -172,6 +159,28 @@ int main(int argc, char *argv[])
          )
         );
 
+
+    volScalarField divTAWSS
+        (
+        IOobject
+        (
+        "divTAWSS",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar
+        (
+        "divTAWSS",
+        dimless/dimLength,
+        // dimMass/(dimLength * dimLength * sqr(dimTime)),
+        //sqr(dimLength)/sqr(dimTime),
+        0
+        )
+        );
+
     volScalarField OSI
         (
          IOobject
@@ -243,6 +252,14 @@ int main(int argc, char *argv[])
         runTime.setTime(timeDirs[timeI], timeI);
         Info<< "Time = " << runTime.timeName() << "    " << endl;
 
+        IOobject Uheader
+            (
+             "U",
+             runTime.timeName(),
+             mesh,
+             IOobject::MUST_READ
+            );
+
         IOobject wallShearStressheader
             (
              "wallShearStress",
@@ -311,31 +328,102 @@ int main(int argc, char *argv[])
                      )
                     );
 
-                forAll(WSS.boundaryField(), patchi)
-                {
+                volScalarField divU
+                    (
+                    IOobject
+                    (
+                    "divU",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar
+                    (
+                    "divU",
+                    dimLength/(dimLength * dimLength),
+                    0
+                    )
+                    );
 
-                    WSS.boundaryFieldRef()[patchi] =
-                         wallShearStress.boundaryField()[patchi]
-                         * rho.value();
+                volScalarField divWSS
+                    (
+                    IOobject
+                    (
+                    "divWSS",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar
+                    (
+                    "divWSS",
+                    dimless/dimLength,
+                    // dimMass/(dimLength * dimLength * sqr(dimTime)),
+                    //sqr(dimLength)/sqr(dimTime),
+                    0
+                    )
+                    );
 
-                    WSSMag.boundaryFieldRef()[patchi] =
-                        mag(-wallShearStress.boundaryField()[patchi])
-                        * rho.value() ;
-                        
-                    TAWSS.boundaryFieldRef()[patchi] +=
-                         wallShearStress.boundaryField()[patchi]
-                         * rho.value();
+                    WSS =
+                         wallShearStress
+                         * rho;
 
-                    TAWSSMag.boundaryFieldRef()[patchi] +=
-                        mag(-wallShearStress.boundaryField()[patchi])
-                        * rho.value() ;
+                    WSSMag =
+                        mag(wallShearStress)
+                        * rho;
 
-                    TAHct.boundaryFieldRef()[patchi] +=
-                        H.boundaryField()[patchi] ;
-                }
+                    dimensionedScalar epsWSS = dimensionedScalar("epsWSS",WSS.dimensions(), 1e-64);
+
+                    divWSS =
+                         fvc::div(WSS/(mag(WSS)+epsWSS));
+
+                    divTAWSS += divWSS;
+
+                    TAWSS +=
+                         wallShearStress
+                         * rho;
+
+                    TAWSSMag +=
+                        mag(-wallShearStress)
+                        * rho;
+
+                    TAHct +=
+                        H ;
+                // forAll(WSS.boundaryField(), patchi)
+                // {
+
+                //     WSS.boundaryFieldRef()[patchi] =
+                //          wallShearStress.boundaryField()[patchi]
+                //          * rho.value();
+
+                //     WSSMag.boundaryFieldRef()[patchi] =
+                //         mag(wallShearStress.boundaryField()[patchi])
+                //         * rho.value();
+
+                //     // divWSS.boundaryFieldRef()[patchi] =
+                //     //     fvc::div(wallShearStress);
+                //          // * rho.value();
+
+
+                //     TAWSS.boundaryFieldRef()[patchi] +=
+                //          wallShearStress.boundaryField()[patchi]
+                //          * rho.value();
+
+                //     TAWSSMag.boundaryFieldRef()[patchi] +=
+                //         mag(-wallShearStress.boundaryField()[patchi])
+                //         * rho.value() ;
+
+                //     TAHct.boundaryFieldRef()[patchi] +=
+                //         H.boundaryField()[patchi] ;
+                // }
                 
                 WSS.write();
                 WSSMag.write();
+                divWSS.write();
 
                 nfield++;
             }
@@ -354,7 +442,7 @@ int main(int argc, char *argv[])
                 mesh.readUpdate();
     // }
     
-    Info<< "Writing TAWSS, TAWSSMag, OSI, RRT, normalVectors" << endl;
+    Info<< "Writing TAWSS, TAWSSMag, divWSS, OSI, RRT, normalVectors" << endl;
     
     // devide by the number of added fields
     if(nfield>0){
@@ -362,27 +450,51 @@ int main(int argc, char *argv[])
     
         TAHct /= nfield;
 
+        TAWSS /= nfield;
+
+        TAWSSMag /= nfield;
+
+        dimensionedScalar epsWSS = dimensionedScalar("epsWSS",TAWSS.dimensions(), 1e-64);
+
+        divTAWSS = fvc::div(TAWSS/(mag(TAWSS)+epsWSS));
+
+        OSI =
+            0.5
+            * ( 1 - mag(TAWSS)
+            /(TAWSSMag+epsWSS)
+            );
+        Info<< "OSI" << endl;
+
+        RRT =
+            1
+            /((
+                (1 - 2.0*OSI)
+                *
+                TAWSSMag
+            )+epsWSS);
+        Info<< "RRT" << endl;
+
         forAll(TAWSS.boundaryField(), patchi)
         {
-            TAWSS.boundaryFieldRef()[patchi] /= nfield;
-    
-            TAWSSMag.boundaryFieldRef()[patchi] /= nfield;
-            
-    
-            OSI.boundaryFieldRef()[patchi] =
-                0.5
-                * ( 1 - mag(TAWSS.boundaryField()[patchi])
-                        /(TAWSSMag.boundaryField()[patchi]+1e-64)
-                  );
-    
-            RRT.boundaryFieldRef()[patchi] =
-                1
-                /((
-                            (1 - 2.0*OSI.boundaryField()[patchi])
-                            *
-                            TAWSSMag.boundaryField()[patchi]
-                  )+1e-64);
-    
+            // TAWSS.boundaryFieldRef()[patchi] /= nfield;
+
+            // TAWSSMag.boundaryFieldRef()[patchi] /= nfield;
+
+
+            // OSI.boundaryFieldRef()[patchi] =
+            //     0.5
+            //     * ( 1 - mag(TAWSS.boundaryField()[patchi])
+            //             /(TAWSSMag.boundaryField()[patchi]+1e-64)
+            //       );
+
+            // RRT.boundaryFieldRef()[patchi] =
+            //     1
+            //     /((
+            //                 (1 - 2.0*OSI.boundaryField()[patchi])
+            //                 *
+            //                 TAWSSMag.boundaryField()[patchi]
+            //       )+1e-64);
+
             normalVector.boundaryFieldRef()[patchi] =
                 mesh.Sf().boundaryField()[patchi]
                 /mesh.magSf().boundaryField()[patchi]
@@ -455,12 +567,16 @@ int main(int argc, char *argv[])
             transWSS.boundaryFieldRef()[patchi] /= nfield;
         }
     }
-    
+
+    Info << "writing WSS metrics to all processed time directories" << endl;
     forAll(timeDirs, timeI)
     {
+    runTime.setTime(timeDirs[timeI], timeI);
+    mesh.readUpdate();
     transWSS.write();
     TAWSS.write();
     TAWSSMag.write();
+    divTAWSS.write();
     TAHct.write();
     OSI.write();
     RRT.write();
@@ -470,6 +586,7 @@ int main(int argc, char *argv[])
     Info<< "End" << endl;
     return 0;
 }
+
 
 
 // ************************************************************************* //

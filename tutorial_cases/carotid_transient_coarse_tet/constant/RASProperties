@@ -1,10 +1,12 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
-|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
+
+
 FoamFile
 {
     version     2.0;
@@ -16,7 +18,8 @@ FoamFile
 
 RASModel            laminar;
 
-turbulence          off;
+turbulence          on;
+
 
 printCoeffs         on;
 
