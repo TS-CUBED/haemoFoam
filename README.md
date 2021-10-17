@@ -14,4 +14,4 @@ Schenkel, T. and Halliday, I., 2020. Continuum Scale Non Newtonian Particle Tran
 
 ## Documentation
 
-Documentation is not complete yet. For the time being there are a few videos I recorded for my students: https://www.youtube.com/playlist?list=PLWHQIdms-YHSVrFf5qchNdjX-lFuDj4kK
+Documentation is not complete yet. For the time being there are a [few videos I recorded for my students.](https://www.youtube.com/playlist?list=PLWHQIdms-YHSVrFf5qchNdjX-lFuDj4kK)
