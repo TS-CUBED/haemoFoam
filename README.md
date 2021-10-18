@@ -12,7 +12,7 @@ This is the preprint of the 2021 Mathematics paper:
 
 Schenkel, T. and Halliday, I., 2020. Continuum Scale Non Newtonian Particle Transport Model for Haemorheology--Implementation and Validation. arXiv preprint arXiv:2004.12380. https://arxiv.org/abs/2004.12380
 
-# Installation
+## Installation
 
 Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2106/etc/bashrc`) and then run
 
