@@ -20,7 +20,7 @@ Documentation is not complete yet. For the time being there are a [few videos I 
 
 ## Acknowledgements:
 
-The windkessel model is based on work by: Andris Piebalgs, Boram Gu, Emily Manchester, Imperial College London, who kindly let me have their original [code](https://github.com/KeepFloyding/OpenFOAM-phys-flow).
+The windkessel model is based on work by: Andris Piebalgs, Boram Gu, Emily Manchester, Imperial College London, who kindly let me have their [original code](https://github.com/KeepFloyding/OpenFOAM-phys-flow).
 
 ## Installation
 
