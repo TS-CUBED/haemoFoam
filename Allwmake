@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! $FOAM_USER_APPBIN ]; then
+    FOAM_USER_APPBIN = $FOAM_SITE_APPBIN
+    FOAM_USER_LIBBIN = $FOAM_SITE_LIBBIN
+fi
+
 #source ~/foam/foam-extend-4.0/etc/bashrc
 
 apps="haemoPimpleFoam haemoSimpleFoam haemoPostProcess"
