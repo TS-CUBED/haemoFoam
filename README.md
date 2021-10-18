@@ -12,7 +12,13 @@ This is the preprint of the 2021 Mathematics paper:
 
 Schenkel, T. and Halliday, I., 2020. Continuum Scale Non Newtonian Particle Transport Model for Haemorheology--Implementation and Validation. arXiv preprint arXiv:2004.12380. https://arxiv.org/abs/2004.12380
 
+# Installation
 
+Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2106/etc/bashrc`) and then run
+
+`./Allwmake`
+
+from the main `haemoFoam-0.1` directory. This will install all the solvers and models.
 
 ## Documentation
 
@@ -22,10 +28,4 @@ Documentation is not complete yet. For the time being there are a [few videos I 
 
 The windkessel model is based on work by: Andris Piebalgs, Boram Gu, Emily Manchester, Imperial College London, who kindly let me have their [original code](https://github.com/KeepFloyding/OpenFOAM-phys-flow).
 
-## Installation
-
-Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2106/etc/bashrc`) and then run
-
-`./Allwmake`
-
-from the main `haemoFoam-0.1` directory. This will install all the solvers and models.
+#
