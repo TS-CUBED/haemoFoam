@@ -21,3 +21,11 @@ Documentation is not complete yet. For the time being there are a [few videos I 
 ## Acknowledgements:
 
 The windkessel model is based on work by: Andris Piebalgs, Boram Gu, Emily Manchester, Imperial College London, who kindly let me have their original [code](https://github.com/KeepFloyding/OpenFOAM-phys-flow).
+
+## Installation
+
+Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2106/etc/bashrc`) and then run
+
+`./Allwmake`
+
+from the main `haemoFoam-0.1` directory. This will install all the solvers and models.
