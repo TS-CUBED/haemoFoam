@@ -8,7 +8,7 @@ fi
 #source ~/foam/foam-extend-4.0/etc/bashrc
 
 apps="haemoPimpleFoam haemoSimpleFoam haemoPostProcess"
-libs="KriegerDougherty Krieger5 Quemada Carreau Yeleswarapu"
+libs="KriegerDougherty Krieger5 Quemada Carreau Yeleswarapu splitFlowRateOutletVelocity"
 
 for app in $apps; do
 	cd $app
