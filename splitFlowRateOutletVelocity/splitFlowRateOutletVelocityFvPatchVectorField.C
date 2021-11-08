@@ -43,7 +43,8 @@ splitFlowRateOutletVelocityFvPatchVectorField
     fixedValueFvPatchField<vector>(p, iF),
     inletPatchName_(),
     volumetric_(false),
-    rhoName_("rho")
+    rhoName_("rho"),
+    flowSplit_(1.0)
 {}
 
 
@@ -95,6 +96,7 @@ splitFlowRateOutletVelocityFvPatchVectorField
 :
     fixedValueFvPatchField<vector>(ptf, p, iF, mapper),
     inletPatchName_(ptf.inletPatchName_),
+    flowSplit_(ptf.flowSplit_),
     volumetric_(ptf.volumetric_),
     rhoName_(ptf.rhoName_)
 {}
@@ -108,6 +110,7 @@ splitFlowRateOutletVelocityFvPatchVectorField
 :
     fixedValueFvPatchField<vector>(ptf),
     inletPatchName_(ptf.inletPatchName_),
+    flowSplit_(ptf.flowSplit_),
     volumetric_(ptf.volumetric_),
     rhoName_(ptf.rhoName_)
 {}
@@ -122,6 +125,7 @@ splitFlowRateOutletVelocityFvPatchVectorField
 :
     fixedValueFvPatchField<vector>(ptf, iF),
     inletPatchName_(ptf.inletPatchName_),
+    flowSplit_(ptf.flowSplit_),
     volumetric_(ptf.volumetric_),
     rhoName_(ptf.rhoName_)
 {}
@@ -171,9 +175,11 @@ void Foam::splitFlowRateOutletVelocityFvPatchVectorField::updateValues
 
     // Calculate the inlet patch flow rate and apply split
     const scalar flowRate = -gSum(rhoInlet*(inletPatch.Sf() & inletPatchU))*flowSplit_;
+    Info<< "Inlet flow rate: " << flowRate/flowSplit_ << endl;
 
     // Calculate the extrapolated outlet patch flow rate
     const scalar estimatedFlowRate = gSum(rhoOutlet*(patch().magSf()*nUp));
+    Info<< "Estimated outlet flow rate " << flowRate << ", Flow Split: " << flowSplit_ << endl;
 
     if (estimatedFlowRate > 0.5*flowRate)
     {
@@ -249,6 +255,7 @@ void Foam::splitFlowRateOutletVelocityFvPatchVectorField::write
 {
     fvPatchField<vector>::write(os);
     os.writeEntry("inletPatch", inletPatchName_);
+    os.writeEntry("flowSplit", flowSplit_);
     if (!volumetric_)
     {
         os.writeEntry("volumetric", volumetric_);
