@@ -1,0 +1,2 @@
+splitFlowRateOutletVelocityFvPatchVectorField.C
+LIB = $(FOAM_USER_LIBBIN)/libsplitFlowRateOutletVelocity
