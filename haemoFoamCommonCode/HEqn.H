@@ -25,10 +25,10 @@ fvScalarMatrix HEqn
 (
  fvm::ddt(H)
  + fvm::div(phi, H)
- - fvm::laplacian(linKc*Kc*sqr(a)*H*gammaDot, H) // diffH
- - fvm::laplacian(nonlinKc*nonlinKcRatio*Kmu*H*sqr(a)*H*gammaDot, H) // diffHnonlin
+ - fvm::laplacian(linKc*Kc*sqr(a)*H*gammaDot, H)  // diffH
+ - fvm::laplacian(nonlinKc*nonlinKcRatio*Kmu*H*sqr(a)*H*gammaDot, H)  // diffHnonlin
  ==
- sourceC 
+ sourceC
  + sourceCnonlin 
  + sourceV
  );

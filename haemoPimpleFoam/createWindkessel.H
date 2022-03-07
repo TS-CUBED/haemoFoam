@@ -33,7 +33,7 @@ IOdictionary windkesselProperties
     IOobject
     (
         "windkesselProperties",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::MUST_READ_IF_MODIFIED,
         IOobject::AUTO_WRITE
@@ -100,12 +100,12 @@ for (int it_check = 0; it_check < N_OUTLETS; it_check++)
 
 /* Creating scalar list for storage of pressure values*/
 
-Info<< "Reading scalar list store \n" << endl;
-scalarIOList store
+Info<< "Reading scalar list WKpressures \n" << endl;
+scalarIOList WKpressures
 (
     IOobject
     (
-        "store",
+        "WKpressures",
         runTime.timeName(),
         mesh,
         IOobject::READ_IF_PRESENT,
@@ -122,6 +122,6 @@ initialise(windkesselProperties);
 
 for (int it = 0; it <N_OUTLETS; it++)
 {
-	store[it] = wk[it].P_0;
+	WKpressures[it] = wk[it].P_0;
 	//Info << "First Stored " << store[it] << endl;
 }

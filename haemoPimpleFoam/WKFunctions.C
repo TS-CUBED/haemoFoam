@@ -103,7 +103,6 @@ double calculate_pressure_veryFirst(int i, fvMesh & mesh, volScalarField& p)
     Info << "Pressure for " << patch_names[i] << " :  " << outPressure << endl;
 
     return outPressure;
-
 }
 
 
@@ -121,7 +120,6 @@ double calculate_flowrate(int i, fvMesh & mesh, surfaceScalarField& phi)
     //Info << "Flowrate for " << patch_names[i] << " :  " << outflow << endl;
 
     return outflow;
-
 }
 
 void execute_at_end(fvMesh& mesh, surfaceScalarField& phi, scalarIOList& store, volScalarField& p, dictionary& windkesselProperties, double& time)
