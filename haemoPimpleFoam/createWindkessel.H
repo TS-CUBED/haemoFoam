@@ -107,7 +107,9 @@ scalarIOList store
     (
         "store",
         runTime.timeName(),
-        mesh
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::AUTO_WRITE
     ),
     N_OUTLETS
 );
