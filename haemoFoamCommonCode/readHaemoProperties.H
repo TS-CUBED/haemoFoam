@@ -9,7 +9,7 @@
           "haemoTransportProperties", // name of the dictionary
           runTime.constant(), // location in the case - this one is in constant
           mesh, // needs the mesh object reference to do some voodoo - unimportant now
-          IOobject::MUST_READ, // the file will be re-read if it gets modified during time stepping
+          IOobject::MUST_READ_IF_MODIFIED, // the file will be re-read if it gets modified during time stepping
           IOobject::NO_WRITE // read-only
          )
         );

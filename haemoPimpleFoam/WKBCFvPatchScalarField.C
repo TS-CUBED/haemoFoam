@@ -107,9 +107,9 @@ void WKBCFvPatchScalarField::updateCoeffs()
 
     /* Accessing the variables stored in mesh */
     const fvMesh& mesh = patch().boundaryMesh().mesh();
-    const scalarIOList& store = mesh.lookupObject<scalarIOList>("store");
+    const scalarIOList& WKpressures = mesh.lookupObject<scalarIOList>("WKpressures");
 
-    const scalar current_pressure = store[index_];
+    const scalar current_pressure = WKpressures[index_];
 
 	//Info << "store in WKBC " << store << nl << endl;
 	//Info << "current_pressure" << current_pressure << nl << endl;

@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
     if (WK_FLAG >0)
     {
       Info << nl << "Updating Windkessel values ..." << endl;
-  		execute_at_end(mesh, phi, store, p, windkesselProperties, runTime.value());
+  		execute_at_end(mesh, phi, WKpressures, p, windkesselProperties, runTime.value());
     }
 #endif
 
