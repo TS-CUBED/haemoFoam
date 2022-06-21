@@ -8,7 +8,7 @@ The current development is on OpenFOAM v2112.
 
 HaemoFoam is published under the GPL (as is OpenFoam). You are, therefore, free to use it. I would ask you for three things, though:
 
-1. Please reference my work, if you use haemoFoam in your research and publications.
+1. Please reference my work if you use haemoFoam in your research and publications.
 2. Please contribute back to haemoFoam and don't just fork it. I would hope we can develop this together in a mutually useful direction.
 3. Please get in touch and let me know what you want to do. I an happy to collaborate.
 
