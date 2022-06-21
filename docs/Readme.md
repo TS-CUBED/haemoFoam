@@ -43,7 +43,7 @@ well).
     ``` bash
     openfoam2106
     
-    cd ~/OpenFOAM/$USER-v2106/applications/haemoFoam-0.2
+    cd ~/OpenFOAM/$USER-v2106/applications/haemoFoam-0.2.1
     
     ./Allwmake
     ```
