@@ -4,6 +4,14 @@ Haemodynamics simulation framework based on OpenFOAM. Includes particle migratio
 
 The current development is on OpenFOAM v2112, but the haemodynamics/haemorheology model will work on foam-extend, the Windkessel model is only implemented in OF (ESI).
 
+## If you want to use haemoFoam
+
+HaemoFoam is published under the GPL (as is OpenFoam). You are, therefore, free to use it. I would ask you for two things, though:
+
+1. Please reference my work, if you use haemoFoam in your research and publications
+2. Please contribute back to haemoFoam and don't just fork it. I would hope we can develop this together in a mutually useful direction
+3. Please get in touch and let me know what you want to do. I an happy to collaborate.
+
 ## Reference:
 
 Schenkel, T.; Halliday, I. Continuum Scale Non Newtonian Particle Transport Model for Hæmorheology. Mathematics 2021, 9, 2100. https://doi.org/10.3390/math9172100 
