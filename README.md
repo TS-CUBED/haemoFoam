@@ -1,4 +1,4 @@
-# haemoFoam-0.1
+# haemoFoam-0.2.1
 
 Haemodynamics simulation framework based on OpenFOAM. Includes particle migration model and advanced haemorheology models, as well as windkessel boundary conditions.
 
