@@ -2,7 +2,7 @@
 
 Haemodynamics simulation framework based on OpenFOAM. Includes particle migration model and advanced haemorheology models, as well as windkessel boundary conditions.
 
-The current development is on OpenFOAM v2112, but the haemodynamics/haemorheology model will work on foam-extend, the Windkessel model is only implemented in OF (ESI).
+The current development is on OpenFOAM v2112.
 
 ## If you want to use haemoFoam
 
@@ -30,7 +30,7 @@ from the main `haemoFoam-0.1` directory. This will install all the solvers and m
 
 ## Documentation
 
-Documentation is not complete yet. For the time being there are a [few videos I recorded for my students.](https://www.youtube.com/playlist?list=PLWHQIdms-YHSVrFf5qchNdjX-lFuDj4kK)
+Documentation is not complete yet. See the `docs` folder. There are also a [few videos I recorded for my students.](https://www.youtube.com/playlist?list=PLWHQIdms-YHSVrFf5qchNdjX-lFuDj4kK)
 
 ## Acknowledgements:
 
