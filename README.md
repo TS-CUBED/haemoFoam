@@ -6,7 +6,7 @@ The current development is on OpenFOAM v2112.
 
 ## If you want to use haemoFoam
 
-HaemoFoam is published under the GPL (as is OpenFoam). You are, therefore, free to use it. I would ask you for two things, though:
+HaemoFoam is published under the GPL (as is OpenFoam). You are, therefore, free to use it. I would ask you for three things, though:
 
 1. Please reference my work, if you use haemoFoam in your research and publications.
 2. Please contribute back to haemoFoam and don't just fork it. I would hope we can develop this together in a mutually useful direction.
