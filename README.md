@@ -26,7 +26,7 @@ Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2106/etc/bashrc`) and the
 
 `./Allwmake`
 
-from the main `haemoFoam-0.1` directory. This will install all the solvers and models.
+from the main `haemoFoam-0.n.n` directory. This will install all the solvers and models.
 
 ## Documentation
 
