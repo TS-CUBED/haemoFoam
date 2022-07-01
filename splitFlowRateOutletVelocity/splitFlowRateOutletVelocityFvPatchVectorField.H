@@ -82,15 +82,14 @@ class splitFlowRateOutletVelocityFvPatchVectorField
         //- Inlet patch name from which the corresponding flow rate is obtained
         word inletPatchName_;
 
+        //- Flow split
+        float flowSplit_;
+
         //- Is volumetric?
         bool volumetric_;
 
         //- Name of the density field used to normalize the mass flux
         word rhoName_;
-
-        //- Flow split
-        float flowSplit_;
-
 
     // Private member functions
 
