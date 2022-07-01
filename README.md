@@ -6,9 +6,9 @@ The current development is on OpenFOAM v2112.
 
 ## If you want to use haemoFoam
 
-HaemoFoam is published under the GPL (as is OpenFoam). You are, therefore, free to use it. I would ask you for two things, though:
+HaemoFoam is published under the GPL (as is OpenFoam). You are, therefore, free to use it. I would ask you for three things, though:
 
-1. Please reference my work, if you use haemoFoam in your research and publications.
+1. Please reference my work if you use haemoFoam in your research and publications.
 2. Please contribute back to haemoFoam and don't just fork it. I would hope we can develop this together in a mutually useful direction.
 3. Please get in touch and let me know what you want to do. I an happy to collaborate.
 
@@ -26,7 +26,7 @@ Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2106/etc/bashrc`) and the
 
 `./Allwmake`
 
-from the main `haemoFoam-0.1` directory. This will install all the solvers and models.
+from the main `haemoFoam-0.n.n` directory. This will install all the solvers and models.
 
 ## Documentation
 
