@@ -1,3 +1,4 @@
 **/lnInclude
 **/linux64*
 *.dep
+.vscode
