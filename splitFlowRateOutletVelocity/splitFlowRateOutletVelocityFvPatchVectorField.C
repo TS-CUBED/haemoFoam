@@ -42,9 +42,9 @@ splitFlowRateOutletVelocityFvPatchVectorField
 :
     fixedValueFvPatchField<vector>(p, iF),
     inletPatchName_(),
+    flowSplit_(1.0),
     volumetric_(false),
-    rhoName_("rho"),
-    flowSplit_(1.0)
+    rhoName_("rho")
 {}
 
 
@@ -58,8 +58,8 @@ splitFlowRateOutletVelocityFvPatchVectorField
 :
     fixedValueFvPatchField<vector>(p, iF, dict, false),
     inletPatchName_(dict.get<word>("inletPatch")),
-    volumetric_(dict.getOrDefault("volumetric", true)),
-    flowSplit_(dict.getOrDefault("flowSplit", 1.0))
+    flowSplit_(dict.getOrDefault("flowSplit", 1.0)),
+    volumetric_(dict.getOrDefault("volumetric", true))
 {
     if (volumetric_)
     {
