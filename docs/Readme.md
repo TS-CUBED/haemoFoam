@@ -288,15 +288,14 @@ FoamFile {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 ICA {
+  Z 0.1;    // commonly R_1 or R_proximal
   C 0.5;
-  R 0.1;   // commonly R_2 or R_distal
-  Z 2.0;    // commonly R_1 or R_proximal
+  R 2.0;   // commonly R_2 or R_distal
 
   // NOTE: Set this to true to use physiological units [mmHg.ml^-1.s] and [ml.mmHg^-1]
   //       if this is false, then SI units are used. Physiological units are converted
   //       at runtime.
   physiologicalUnits true;
-
 
   outIndex 0; // must equal 'index' value in 0/p
   FDM_order 1;
@@ -314,9 +313,10 @@ ICA {
 }
 
 ECA {
+  Z 0.2;
   C 1.5;
-  R 0.2;
-  Z 0.6;
+  R 0.6;
+  
   physiologicalUnits true;
 
   outIndex 1;
