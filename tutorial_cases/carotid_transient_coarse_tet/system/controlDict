@@ -38,7 +38,7 @@ deltaT          1e-3;
 
 writeControl    runTime;
 
-writeInterval   1e-2;
+writeInterval   1e-3;
 
 purgeWrite      0;
 
@@ -56,8 +56,110 @@ runTimeModifiable true;
 
 functions
 {
-    //#include "surfaces"
-    CCA
+    wallShearStress
+    {
+    // Mandatory entries (unmodifiable)
+    type            wallShearStress;
+    libs            (fieldFunctionObjects);
+
+    // Optional entries (runtime modifiable)
+    // patches         (WALL APEX SINUS); // (wall1 "(wall2|wall3)");
+
+    // Optional (inherited) entries
+    // writePrecision  8;
+    // writeToFile     true;
+    // useUserTime     true;
+    // region          region0;
+    // enabled         true;
+    // log             true;
+    // timeStart       0;
+    // timeEnd         1000;
+    // executeControl  timeStep;
+    // executeInterval 1;
+    writeControl    outputTime;
+    }
+
+    wallShearStressMag
+    {
+        // Mandatory entries (unmodifiable)
+        type            mag;
+        libs            (fieldFunctionObjects);
+
+        // Mandatory (inherited) entries (runtime modifiable)
+        field           wallShearStress;
+
+        // Optional (inherited) entries
+        result          wallShearStressMag;
+        region          region0;
+        enabled         true;
+        log             false;
+        timeStart       0;
+        timeEnd         1000;
+        executeControl  timeStep;
+        executeInterval 1;
+        writeControl    none;
+        writeInterval   1;
+    }
+
+    averagesWALL
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            WALL;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                wallShearStress
+                wallShearStressMag
+            );
+    }
+    averagesAPEX
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            APEX;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                wallShearStress
+                wallShearStressMag
+            );
+    }
+    averagesSINUS
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            SINUS;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                wallShearStress
+                wallShearStressMag
+            );
+    }
+
+    averagesCCA
     {
         type            surfaceFieldValue;
         libs            ("libfieldFunctionObjects.so");
@@ -77,7 +179,7 @@ functions
                 H
             );
     }
-    ICA
+    averagesICA
     {
         type            surfaceFieldValue;
         libs            ("libfieldFunctionObjects.so");
@@ -97,7 +199,7 @@ functions
                 H
             );
     }
-    ECA
+    averagesECA
     {
         type            surfaceFieldValue;
         libs            ("libfieldFunctionObjects.so");
@@ -117,12 +219,72 @@ functions
                 H
             );
     }
-    //    residuals
-    //    {
-    //        type            residuals;
-    //        libs            ("libutilityFunctionObjects.so");
-    //        fields          (U p);
-    //        writeResidualFields yes;
-    //    }
+
+   flowRateCCA
+   {
+        type            surfaceFieldValue;
+        libs ("libfieldFunctionObjects.so");
+        enabled         yes;
+        writeControl    timeStep;
+        writeInterval   1;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            CCA;
+        operation       sum;
+
+        fields
+        (
+            phi
+        );
+   }
+
+   flowRateICA
+   {
+        type            surfaceFieldValue;
+        libs ("libfieldFunctionObjects.so");
+        enabled         yes;
+        writeControl    timeStep;
+        writeInterval   1;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            ICA;
+        operation       sum;
+
+        fields
+        (
+            phi
+        );
+   }
+
+   flowRateECA
+   {
+        type            surfaceFieldValue;
+        libs ("libfieldFunctionObjects.so");
+        enabled         yes;
+        writeControl    timeStep;
+        writeInterval   1;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            ECA;
+        operation       sum;
+
+        fields
+        (
+            phi
+        );
+   }
+
+   solverInfo
+   {
+       type            solverInfo;
+       libs            ("libutilityFunctionObjects.so");
+       fields          (U H p);
+       timeStart       3.01;
+       writeResidualFields no;
+   }
+
 }
 // ************************************************************************* //
