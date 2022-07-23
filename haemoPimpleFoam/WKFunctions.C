@@ -49,9 +49,9 @@ void initialise(const dictionary& windkesselProperties)
 
         const dictionary& subDict = windkesselProperties.subDict(outletName);
 
+        scalar Z = readScalar(subDict.lookup("Z"));
         scalar C = readScalar(subDict.lookup("C"));
         scalar R = readScalar(subDict.lookup("R"));
-        scalar Z = readScalar(subDict.lookup("Z"));
         bool physUnits = readBool(subDict.lookup("physiologicalUnits"));
         scalar real_index = readScalar(subDict.lookup("outIndex"));
         scalar Qpre1 = readScalar(subDict.lookup("Flowrate_oneStepBefore"));
@@ -69,17 +69,17 @@ void initialise(const dictionary& windkesselProperties)
         /* e.g., last saved time: 80.00, running from 80.01 ---> 0: 80.01, -1: 80.00, -2: 79.99, -3: 79.98*/
         if (physUnits == true)
             {
-            R = R * 133.322365e6;
             Z = Z * 133.322365e6;
             C = C * 1e-6 / 133.322365;
-            Info << "Converting C, R, Z from physioligical units to SI units!";
+            R = R * 133.322365e6;
+            Info << "Converting Z, C, R from physioligical units to SI units!" <<endl;;
             }
 
-        Info << "C, R, Z and index are " << C << ", " << R << ", " << Z << ", " << out_index << "." <<endl;
+        Info << "Z, C, R and index are " << Z << ", " << C << ", " << R << ", " << out_index << "." <<endl;
 
-        wk[out_index].R = R;
-        wk[out_index].C = C;
         wk[out_index].Z = Z;
+        wk[out_index].C = C;
+        wk[out_index].R = R;
         wk[out_index].physUnits = physUnits;
         wk[out_index].id = out_index;
         wk[out_index].Q_3 = Qpre3;
