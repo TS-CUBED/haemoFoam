@@ -28,9 +28,6 @@ ICA {
 
   outIndex 0; // must equal 'index' value in 0/p
   FDM_order 1;
-
-  // NOTE: ALL WK PARAMETERS ARE IN SI UNITS! Not in physiological units.
-
   // backward difference order: up to 3rd order
 
   // Initialise WK parameters
@@ -38,6 +35,7 @@ ICA {
   Flowrate_threeStepBefore 0;
   Flowrate_twoStepBefore 0;
   Flowrate_oneStepBefore 0;
+  // NOTE: these pressures are in [Pa]!
   Pressure_twoStepBefore 9000;
   Pressure_oneStepBefore 9000;
   Pressure_start 9000;
