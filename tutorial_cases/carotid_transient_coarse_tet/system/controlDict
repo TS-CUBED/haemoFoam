@@ -79,14 +79,14 @@ functions
     writeControl    outputTime;
     }
 
-    Mag
+    wallShearStressMag
     {
         // Mandatory entries (unmodifiable)
         type            mag;
         libs            (fieldFunctionObjects);
 
         // Mandatory (inherited) entries (runtime modifiable)
-        field           U; // wallShearStress;
+        field           wallShearStress;
 
         // Optional (inherited) entries
         result          wallShearStressMag;
@@ -101,7 +101,64 @@ functions
         writeInterval   1;
     }
 
-    //#include "surfaces"
+    averagesWALL
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            WALL;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                wallShearStress
+                wallShearStressMag
+            );
+    }
+    averagesAPEX
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            APEX;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                wallShearStress
+                wallShearStressMag
+            );
+    }
+    averagesSINUS
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    timeStep;
+        log             yes;
+        writeFields     no;
+        regionType      patch;
+        name            SINUS;
+        operation       average;
+        //        operation       weightedAverage;
+        //        weightField     phi;
+
+        fields
+            (
+                wallShearStress
+                wallShearStressMag
+            );
+    }
+
     averagesCCA
     {
         type            surfaceFieldValue;
@@ -120,8 +177,6 @@ functions
                 p
                 U
                 H
-                wallShearStress
-                wallShearStressMag
             );
     }
     averagesICA
@@ -142,8 +197,6 @@ functions
                 p
                 U
                 H
-                wallShearStress
-                wallShearStressMag
             );
     }
     averagesECA
@@ -164,8 +217,6 @@ functions
                 p
                 U
                 H
-                wallShearStress
-                wallShearStressMag
             );
     }
 
