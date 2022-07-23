@@ -43,7 +43,7 @@ well).
     ``` bash
     openfoam2106
     
-    cd ~/OpenFOAM/$USER-v2106/applications/haemoFoam-0.2.6
+    cd ~/OpenFOAM/$USER-v2106/applications/haemoFoam-0.2.7
     
     ./Allwmake
     ```
@@ -269,57 +269,68 @@ the `constant` directory in two files:
 
 <!-- end list -->
 
-    /*--------------------------------*- C++ -*----------------------------------*\
-    | =========                 |                                                 |
-    | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-    |  \\    /   O peration     | Version:  4.0                                   |
-    |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
-    |    \\/     M anipulation  |                                                 |
-    \*---------------------------------------------------------------------------*/
-    FoamFile
-    {
-        version     4.0;
-        format      ascii;
-        class       dictionary;
-        object      windkesselProperties;
-    }
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    
-    outlet_1
-    {
-        C                   10.1e-10;
-        R                   17.1e+08;        // commonly R_2 or R_distal
-        Z                   6.3e+07;         // commonly R_1 or R_proximal
-        outIndex            0;               // must equal 'index' value in 0/p
-        FDM_order           1;               // backward FD order: up to 3rd order
-    
-        // Initialise WK parameters
-        // also useful to set initial condidions to speed up pressure development
-        Flowrate_threeStepBefore        0;
-        Flowrate_twoStepBefore          0;
-        Flowrate_oneStepBefore          0;
-        Pressure_twoStepBefore          0;
-        Pressure_oneStepBefore          0;
-        Pressure_start                  0;
-    
-    }
-    
-    outlet_2
-    {
-        C                   4.1e-10;
-        R                   41.7e+08;
-        Z                   17.6e+07;
-        outIndex            1;
-        FDM_order           1;
-        Flowrate_threeStepBefore        0;
-        Flowrate_twoStepBefore          0;
-        Flowrate_oneStepBefore          0;
-        Pressure_twoStepBefore          0;
-        Pressure_oneStepBefore          0;
-        Pressure_start                  0;
-    }
-    
-    // ************************************************************************* //
+```example
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+
+FoamFile {
+  version 4.0;
+  format ascii;
+  class dictionary;
+  object windkesselProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ICA {
+  Z 0.1;    // commonly R_1 or R_proximal
+  C 0.5;
+  R 2.0;   // commonly R_2 or R_distal
+
+  // NOTE: Set this to true to use physiological units [mmHg.ml^-1.s] and [ml.mmHg^-1]
+  //       if this is false, then SI units are used. Physiological units are converted
+  //       at runtime.
+  physiologicalUnits true;
+
+  outIndex 0; // must equal 'index' value in 0/p
+  FDM_order 1;
+  // backward difference order: up to 3rd order
+
+  // Initialise WK parameters
+  // also useful to set initial condidions to speed up pressure development
+  Flowrate_threeStepBefore 0;
+  Flowrate_twoStepBefore 0;
+  Flowrate_oneStepBefore 0;
+  // NOTE: these pressures are in [Pa]!
+  Pressure_twoStepBefore 9000;
+  Pressure_oneStepBefore 9000;
+  Pressure_start 9000;
+}
+
+ECA {
+  Z 0.2;
+  C 1.5;
+  R 0.6;
+  
+  physiologicalUnits true;
+
+  outIndex 1;
+  FDM_order 1;
+  Flowrate_threeStepBefore 0;
+  Flowrate_twoStepBefore 0;
+  Flowrate_oneStepBefore 0;
+  Pressure_twoStepBefore 9000;
+  Pressure_oneStepBefore 9000;
+  Pressure_start 9000;
+}
+
+// ************************************************************************* //
+```
 
 **Important Notes:**
 
@@ -327,9 +338,10 @@ the `constant` directory in two files:
     equation can be set to up to third order. However for realistic
     cases, first order is sufficient, and higher orders can become
     unstable.
-  - The parameters for the windkessel properties are given in SI-units.
+  - The parameters for the windkessel properties can be given in 
+    physiological or in SI units.
     In most publications these will be given in physiological units,
-    e.g., \(\left[ mm_{Hg}.ml^{-1}.s \right]\). These need to be
+    e.g., [ mm_{Hg}.ml^{-1}.s ]. These need to be
     converted to SI-units\!
   - If the windkessel properties are not available, fixed relative
     pressures at the outlets are a reasonable alternative. A simple
