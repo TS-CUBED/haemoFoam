@@ -20,6 +20,7 @@ typedef struct
     double R;       /* Resistance */
     double C;       /* Compliance */
     double Z;       /* Impedance */
+    bool physUnits; /* Physiological or SI units for R, C, Z */
     int order;
     double time;    // store time in windkessel struct to reset values
                     // should the time step be run multiple times
@@ -48,9 +49,10 @@ void initialise(const dictionary& windkesselProperties)
 
         const dictionary& subDict = windkesselProperties.subDict(outletName);
 
+        scalar Z = readScalar(subDict.lookup("Z"));
         scalar C = readScalar(subDict.lookup("C"));
         scalar R = readScalar(subDict.lookup("R"));
-        scalar Z = readScalar(subDict.lookup("Z"));
+        bool physUnits = readBool(subDict.lookup("physiologicalUnits"));
         scalar real_index = readScalar(subDict.lookup("outIndex"));
         scalar Qpre1 = readScalar(subDict.lookup("Flowrate_oneStepBefore"));
         scalar Qpre2 = readScalar(subDict.lookup("Flowrate_twoStepBefore"));
@@ -64,11 +66,21 @@ void initialise(const dictionary& windkesselProperties)
         int order = FDMorder;
 
 
-        Info << "C, R, Z and index are " << C << ", " << R << ", " << Z << ", " << out_index << "." <<endl;
         /* e.g., last saved time: 80.00, running from 80.01 ---> 0: 80.01, -1: 80.00, -2: 79.99, -3: 79.98*/
-        wk[out_index].R = R;
-        wk[out_index].C = C;
+        if (physUnits == true)
+            {
+            Z = Z * 133.322365e6;
+            C = C * 1e-6 / 133.322365;
+            R = R * 133.322365e6;
+            Info << "Converting Z, C, R from physioligical units to SI units!" <<endl;;
+            }
+
+        Info << "Z, C, R and index are " << Z << ", " << C << ", " << R << ", " << out_index << "." <<endl;
+
         wk[out_index].Z = Z;
+        wk[out_index].C = C;
+        wk[out_index].R = R;
+        wk[out_index].physUnits = physUnits;
         wk[out_index].id = out_index;
         wk[out_index].Q_3 = Qpre3;
         wk[out_index].Q_2 = Qpre2;
@@ -225,9 +237,6 @@ void execute_at_end(fvMesh& mesh, surfaceScalarField& phi, scalarIOList& store, 
         WK_dict.set("Pressure_start", wk[i].P1);
 
     /* update */
-    // if (wk[i].time != time)
-    // { 
-    //    Info << "time step advanced, updating WK properties" << endl;
         wk[i].P_2 = wk[i].P_1;
         wk[i].P_1 = wk[i].P_0;
         wk[i].P_0 = wk[i].P1;
@@ -235,7 +244,7 @@ void execute_at_end(fvMesh& mesh, surfaceScalarField& phi, scalarIOList& store, 
         wk[i].Q_2 = wk[i].Q_1;
         wk[i].Q_1 = wk[i].Q_0;
         wk[i].time = time;
-    // }
+
     Info << "P(n)   = " << wk[i].P1 << endl;
 
     

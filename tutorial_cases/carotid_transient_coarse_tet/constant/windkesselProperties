@@ -16,14 +16,17 @@ FoamFile {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 ICA {
-  C 10e-10;
-  R 15e+08;   // commonly R_2 or R_distal
-  Z 6e+07;    // commonly R_1 or R_proximal
+  Z 0.1;    // commonly R_1 or R_proximal
+  C 0.5;
+  R 2;   // commonly R_2 or R_distal
+  physiologicalUnits true;
+
+  // NOTE: Set this to true to use physiological units [mmHg.ml^-1.s] and [ml.mmHg^-1]
+  //       if this is false, then SI units are used. Physiological units are converted
+  //       at runtime.
+
   outIndex 0; // must equal 'index' value in 0/p
   FDM_order 1;
-
-  // NOTE: ALL WK PARAMETERS ARE IN SI UNITS! Not in physiological units.
-
   // backward difference order: up to 3rd order
 
   // Initialise WK parameters
@@ -31,15 +34,18 @@ ICA {
   Flowrate_threeStepBefore 0;
   Flowrate_twoStepBefore 0;
   Flowrate_oneStepBefore 0;
+  // NOTE: these pressures are in [Pa]!
   Pressure_twoStepBefore 9000;
   Pressure_oneStepBefore 9000;
   Pressure_start 9000;
 }
 
 ECA {
-  C 10e-10;
-  R 15e+08;
-  Z 6e+07;
+  Z 0.2;
+  C 1.5;
+  R 0.6;
+  physiologicalUnits true;
+
   outIndex 1;
   FDM_order 1;
   Flowrate_threeStepBefore 0;

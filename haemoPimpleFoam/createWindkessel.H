@@ -35,7 +35,8 @@ IOdictionary windkesselProperties
         "windkesselProperties",
         runTime.constant(),
         mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
+        IOobject::READ_IF_PRESENT,
+        // IOobject::MUST_READ_IF_MODIFIED,
         IOobject::AUTO_WRITE
     )
 );
@@ -46,7 +47,12 @@ IOdictionary windkesselProperties
 const wordList outletNames(windkesselProperties.toc());
 int sizeOf = outletNames.size();
 N_OUTLETS = sizeOf;
-Info << "Number of outlets are :" << N_OUTLETS << endl;
+if (N_OUTLETS > 0)
+{
+    Info << "Number of windkessel outlets are :" << N_OUTLETS << endl;
+} else {
+    Info << "File constant/windkesselProperties not found. If you use WKBC, please define the properties in that file." << endl;
+}
 
 /* Read flag */
 int WK_FLAG = N_OUTLETS;
@@ -78,8 +84,11 @@ dimensionedScalar rho
 
 RHO_0 = rho.value();
 
+
 /* Updating global array patch_names */
 
+// if (WK_FLAG >0)
+// {
 
  forAll(outletNames, item)
    {
@@ -99,8 +108,11 @@ for (int it_check = 0; it_check < N_OUTLETS; it_check++)
   }
 
 /* Creating scalar list for storage of pressure values*/
+if (N_OUTLETS > 0)
+{
+    Info<< "Reading scalar list WKpressures \n" << endl;
+}
 
-Info<< "Reading scalar list WKpressures \n" << endl;
 scalarIOList WKpressures
 (
     IOobject
@@ -125,3 +137,4 @@ for (int it = 0; it <N_OUTLETS; it++)
 	WKpressures[it] = wk[it].P_0;
 	//Info << "First Stored " << store[it] << endl;
 }
+// }
