@@ -104,4 +104,32 @@
          mesh,
          dimensionedScalar("sourceCnonlin", dimless/dimTime, scalar(0.0))
         );
+
+    volTensorField Ei
+    (
+        IOobject
+        (
+            "Ei",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh
+    );
+
+    // Info<< "Creating field E\n" <<endl;
+    // volTensorField EigenVectors
+    //     (
+    //      IOobject
+    //      (
+    //       "Eigenvectors",
+    //       runTime.timeName(),
+    //       mesh,
+    //       IOobject::READ_IF_PRESENT,
+    //       IOobject::AUTO_WRITE
+    //      ),
+    //      mesh,
+    //      dimensionedTensor("EigenVectors", dimless/dimTime, tensor::zero)
+    //     );
     //  and back to the original code

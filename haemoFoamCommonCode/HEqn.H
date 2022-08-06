@@ -1,7 +1,11 @@
 // Haematocrit transport equation
 
 
-gammaDot = pow(2,0.5)*mag(symm(fvc::grad(U)));
+volSymmTensorField E = symm(fvc::grad(U));
+
+Ei = eigenVectors(E);
+
+gammaDot = pow(2,0.5)*mag(E);
 // that is the usual definition of gammaDot
 
 sourceC         = fvc::laplacian(linKc*Kc*sqr(a)*sqr(H), gammaDot);
