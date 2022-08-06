@@ -238,9 +238,7 @@ examples.
 Most OpenFOAM boundary conditions are available in `haemoFoam` as well.
 
 However, there is a limitation in the implementation of the windkessel
-boundary condition in `haemoFoam`. Even if this BC is not needed, the
-configuration file (`windkesselProperties`) needs to be present in the
-`constant` directory\[5\].
+boundary condition in `haemoFoam`.
 
 Here I only describe the special boundary conditions in `haemoFoam`.
 
@@ -743,8 +741,5 @@ Tubes: Theory and Experiment.” *Mechanics Research Communications* 25
 
 4.  groovyBC is part of the "Swiss Army Knife for Foam" (swak4Foam)
     toolkit, which I recommend.
-
-5.  I will need to address this in an upcoming refactoring, but at the
-    moment, I have decided to just leave it as is.
 
 6.  could be extended to multiple inlets
