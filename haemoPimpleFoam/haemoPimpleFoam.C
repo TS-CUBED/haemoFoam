@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
 
 #ifdef OPENFOAMESIORFOUNDATION
     /* Updating the Windkessel struct data structure*/
-    if (WK_FLAG >0)
+    if (WK_FLAG > 0)
     {
       Info << nl << "Updating Windkessel values ..." << endl;
   		execute_at_end(mesh, phi, WKpressures, p, windkesselProperties, runTime.value());
