@@ -2,7 +2,7 @@
 
 Haemodynamics simulation framework based on OpenFOAM. Includes particle migration model and advanced haemorheology models, as well as windkessel boundary conditions.
 
-The current development is on OpenFOAM v2112.
+The current development is on OpenFOAM v2206.
 
 ## If you want to use haemoFoam
 
