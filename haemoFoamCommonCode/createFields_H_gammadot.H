@@ -74,7 +74,77 @@
          mesh,
          dimensionedScalar("sourceC", dimless/dimTime, scalar(0.0))
         );
-    
+
+    Info<< "Creating field sourceCorig\n" <<endl;
+    volScalarField sourceCorig
+        (
+         IOobject
+         (
+          "sourceCorig",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar("sourceCorig", dimless/dimTime, scalar(0.0))
+        );
+    Info<< "Creating field sourceCHgamma\n" <<endl;
+    volScalarField sourceCHgamma
+        (
+         IOobject
+         (
+          "sourceCHgamma",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar("sourceCHgamma", dimless/dimTime, scalar(0.0))
+        );
+    Info<< "Creating field sourceCHgammaGrad\n" <<endl;
+    volScalarField sourceCHgammaGrad
+        (
+         IOobject
+         (
+          "sourceCHgammaGrad",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar("sourceCHgammaGrad", dimless/dimTime, scalar(0.0))
+        );
+    Info<< "Creating field sourceCHgammaZ\n" <<endl;
+    volScalarField sourceCHgammaZ
+        (
+         IOobject
+         (
+          "sourceCHgammaZ",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar("sourceCHgammaZ", dimless/dimTime, scalar(0.0))
+        );
+    Info<< "Creating field sourceCfvcgrad\n" <<endl;
+    volScalarField sourceCgammaZ
+        (
+         IOobject
+         (
+          "sourceCgammaZ",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar("sourceCgammaZ", dimless/dimTime, scalar(0.0))
+        );
     Info<< "Creating field sourceV\n" <<endl;
     volScalarField sourceV
         (
@@ -88,6 +158,21 @@
          ),
          mesh,
          dimensionedScalar("sourceV", dimless/dimTime, scalar(0.0))
+        );
+
+    Info<< "Creating field sourceVorig\n" <<endl;
+    volScalarField sourceVorig
+        (
+         IOobject
+         (
+          "sourceVorig",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar("sourceVorig", dimless/dimTime, scalar(0.0))
         );
     
     Info<< "Creating field sourceCnonlin\n" <<endl;
@@ -112,11 +197,128 @@
             "Ei",
             runTime.timeName(),
             mesh,
-            IOobject::NO_READ,
+            IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        mesh
+        mesh,
+        dimensionedTensor("Ei", dimless, tensor::zero)
     );
+
+    volVectorField Ev
+    (
+        IOobject
+        (
+            "Ev",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedVector("Ev", dimless/dimTime, vector::zero)
+    );
+
+
+    volVectorField Evmag
+    (
+        IOobject
+        (
+            "Evmag",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedVector("Evmag", dimless/dimTime, vector::zero)
+    );
+
+
+    volVectorField d1
+    (
+        IOobject
+        (
+            "d1",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedVector("d1", dimless, vector::zero)
+    );
+
+    volVectorField d2
+    (
+        IOobject
+        (
+            "d2",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedVector("d2", dimless, vector::zero)
+    );
+
+    volVectorField d3
+    (
+        IOobject
+        (
+            "d3",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedVector("d3", dimless, vector::zero)
+    );
+
+
+    volVectorField gradGammaDot
+    (
+        IOobject
+        (
+            "gradGammaDot",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedVector("gradGammaDot", dimless/dimTime/dimLength, vector::zero)
+    );
+
+    volVectorField divGammaDotZ
+    (
+        IOobject
+        (
+            "divGammaDotZ",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedVector("divGammaDotZ", dimless/dimTime/dimLength, vector::zero)
+    );
+
+    volScalarField minEv
+        (
+         IOobject
+         (
+          "minEv",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar("minEv", dimless/dimTime, scalar(0.0))
+        );
+
 
     // Info<< "Creating field E\n" <<endl;
     // volTensorField EigenVectors
