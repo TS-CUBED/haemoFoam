@@ -22,7 +22,8 @@
           "gammaDot",
           runTime.timeName(),
           mesh,
-          IOobject::READ_IF_PRESENT,
+          // IOobject::READ_IF_PRESENT,
+          IOobject::MUST_READ,
           IOobject::AUTO_WRITE
          ),
          mesh,
