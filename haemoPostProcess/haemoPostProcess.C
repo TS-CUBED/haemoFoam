@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     instantList timeDirs = timeSelector::select0(runTime, args);
 #   include "createMesh.H"
 
-#   include "readHaemoProperties.H"
+// #   include "readHaemoProperties.H"
 
     IOdictionary transportProperties
         (
@@ -239,9 +239,34 @@ int main(int argc, char *argv[])
          )
         );
 
+    volScalarField H
+        (
+         IOobject
+         (
+          "H",
+          runTime.timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+         ),
+         mesh,
+         dimensionedScalar
+         (
+          "H",
+          dimless,
+          0
+         )
+        );
+
 
 
     int nfield = 0;
+
+    // Define a flag if H exists or not. If not, we don't calculate THct.
+    // This way we can use the haemoPostProcess code for regular pimpleFoam
+    // results.
+    //
+    bool Hexists = true;
 
     // First run, calculate WSS, avgWSS and OSI
 
@@ -285,8 +310,14 @@ int main(int argc, char *argv[])
                 Info<< "    Reading wallShearStress" << endl;
                 volVectorField wallShearStress(wallShearStressheader, mesh);
 
-                Info<< "    Reading H" << endl;
-                volScalarField H(Hheader, mesh);
+                if (Hheader.typeHeaderOk<volScalarField>(true))
+                {
+                    Info<< "    Reading H" << endl;
+                    volScalarField H(Hheader, mesh);
+                } else {
+                    Info << "    H field not found, assuming case was not run with haemoFoam" << endl;
+                    Hexists = false;
+                }
 
                 Info<< "    Calculating WSS" << endl;
 
@@ -391,8 +422,13 @@ int main(int argc, char *argv[])
                         mag(-wallShearStress)
                         * rho;
 
-                    TAHct +=
-                        H ;
+                    if (Hexists) {
+                        TAHct += H ;
+                    } else {
+                        Info << "H field not found" << endl;
+                    }
+
+
                 // forAll(WSS.boundaryField(), patchi)
                 // {
 
@@ -447,8 +483,10 @@ int main(int argc, char *argv[])
     // devide by the number of added fields
     if(nfield>0){
         Info<< "number of fields added: "<< nfield << endl;
-    
-        TAHct /= nfield;
+
+        if (Hexists) {
+            TAHct /= nfield;
+        }
 
         TAWSS /= nfield;
 
@@ -577,10 +615,12 @@ int main(int argc, char *argv[])
     TAWSS.write();
     TAWSSMag.write();
     divTAWSS.write();
-    TAHct.write();
     OSI.write();
     RRT.write();
     normalVector.write();
+    if (Hexists){
+        TAHct.write();
+    }
     }
 
     Info<< "End" << endl;
