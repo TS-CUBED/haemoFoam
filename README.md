@@ -22,7 +22,7 @@ Schenkel, T. and Halliday, I., 2020. Continuum Scale Non Newtonian Particle Tran
 
 ## Installation
 
-Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2106/etc/bashrc`) and then run
+Initialise OpenFOAM (e.g. `. /usr/lib/openfoam/openfoam2306/etc/bashrc`) and then run
 
 `./Allwmake`
 
